@@ -1,0 +1,1085 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+<ProgramName>
+<![CDATA[
+COUSR03C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The primary purpose of COUSR03C is to delete a user from the USRSEC file in the CardDemo application. It provides functionality for administrators to remove user accounts from the system.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the user management domain of the CardDemo application. It is part of the administrative workflow that allows for the maintenance and control of user accounts within the system. This functionality is crucial for managing access and ensuring the security of the application by allowing administrators to remove user accounts when necessary.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. User Lookup: The program allows administrators to look up a user by their User ID (USRIDINI) in the USRSEC file.
+
+2. User Information Display: Once a user is found, the program displays their information, including First Name (FNAMEI), Last Name (LNAMEI), and User Type (USRTYPEI).
+
+3. User Deletion: The program provides the functionality to delete the selected user from the USRSEC file using the DELETE-USER-SEC-FILE paragraph.
+
+4. Error Handling: The program includes error handling mechanisms, such as checking for empty User ID input and handling various response codes from file operations.
+
+5. Screen Management: The program manages the display and interaction with the COUSR3A screen, including sending and receiving data to and from the screen.
+
+6. Navigation: The program supports navigation options, allowing users to return to the previous screen (COADM01C) or the sign-on screen (COSGN00C).
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. USRSEC: This file contains user security information. The program reads from this file to retrieve user details based on the input User ID.
+
+Output Files:
+1. USRSEC: The program writes to this file when deleting a user record.
+
+Miscellaneous Input:
+1. User Input: The program receives user input from the COUSR3A screen, primarily the User ID (USRIDINI) for user lookup and deletion.
+2. Function Keys: The program processes various function key inputs (e.g., ENTER, PF3, PF4, PF5, PF12) to control program flow and actions.
+
+Miscellaneous Output:
+1. Screen Output: The program sends data to the COUSR3A screen, including user details (First Name, Last Name, User Type) and error messages.
+2. Error Messages: The program generates and displays error messages (ERRMSGO) on the screen for various scenarios, such as invalid input or processing errors.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the CardDemo application itself. It primarily interacts with the USRSEC file and the COUSR3A screen within the application's ecosystem.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+
+
+<OverallProgramLogicAndFlow>
+
+<FlowchartRepresentation>
+<![CDATA[
+digraph G {
+    node [shape=oval, style=filled, fillcolor=lightgray];
+    
+    "PROCEDURE DIVISION" -> "MAIN-PARA" [label="Start"];
+    "MAIN-PARA" -> "PROCESS-ENTER-KEY" [label="if EIBCALEN > 0 and CDEMO-PGM-REENTER and CDEMO-CU03-USR-SELECTED not empty"];
+    "MAIN-PARA" -> "RECEIVE-USRDEL-SCREEN" [label="if EIBCALEN > 0 and CDEMO-PGM-REENTER"];
+    "MAIN-PARA" -> "RETURN-TO-PREV-SCREEN" [label="if EIBCALEN = 0"];
+    "MAIN-PARA" -> "SEND-USRDEL-SCREEN" [label="if EIBCALEN > 0 and not CDEMO-PGM-REENTER"];
+    
+    "RECEIVE-USRDEL-SCREEN" -> "PROCESS-ENTER-KEY" [label="if EIBAID = DFHENTER"];
+    "RECEIVE-USRDEL-SCREEN" -> "RETURN-TO-PREV-SCREEN" [label="if EIBAID = DFHPF3 or DFHPF12"];
+    "RECEIVE-USRDEL-SCREEN" -> "CLEAR-CURRENT-SCREEN" [label="if EIBAID = DFHPF4"];
+    "RECEIVE-USRDEL-SCREEN" -> "DELETE-USER-INFO" [label="if EIBAID = DFHPF5"];
+    "RECEIVE-USRDEL-SCREEN" -> "SEND-USRDEL-SCREEN" [label="if other key pressed"];
+    
+    "PROCESS-ENTER-KEY" -> "SEND-USRDEL-SCREEN" [label="if User ID is empty"];
+    "PROCESS-ENTER-KEY" -> "READ-USER-SEC-FILE" [label="if User ID is not empty"];
+    "PROCESS-ENTER-KEY" -> "SEND-USRDEL-SCREEN" [label="after reading user data"];
+    
+    "DELETE-USER-INFO" -> "SEND-USRDEL-SCREEN" [label="if User ID is empty"];
+    "DELETE-USER-INFO" -> "READ-USER-SEC-FILE" [label="if User ID is not empty"];
+    "DELETE-USER-INFO" -> "DELETE-USER-SEC-FILE" [label="after reading user data"];
+    
+    "READ-USER-SEC-FILE" -> "SEND-USRDEL-SCREEN" [label="after reading user data or if error occurs"];
+    
+    "DELETE-USER-SEC-FILE" -> "INITIALIZE-ALL-FIELDS" [label="if delete successful"];
+    "DELETE-USER-SEC-FILE" -> "SEND-USRDEL-SCREEN" [label="after delete operation or if error occurs"];
+    
+    "CLEAR-CURRENT-SCREEN" -> "INITIALIZE-ALL-FIELDS";
+    "CLEAR-CURRENT-SCREEN" -> "SEND-USRDEL-SCREEN";
+    
+    "SEND-USRDEL-SCREEN" -> "POPULATE-HEADER-INFO";
+    "SEND-USRDEL-SCREEN" -> "END" [label="after sending screen"];
+    
+    "RETURN-TO-PREV-SCREEN" -> "END" [label="Exit to previous program"];
+    
+    "INITIALIZE-ALL-FIELDS" -> "END" [label="Fields initialized"];
+}
+]]>
+</FlowchartRepresentation>
+
+<ProgramStructureAndModules>
+    <OverallStructure>
+        <![CDATA[
+        The COUSR03C program is structured into four main divisions:
+
+        1. IDENTIFICATION DIVISION: This division identifies the program with the name COUSR03C and provides information about its purpose, which is to delete a user from the USRSEC file in the CardDemo application.
+
+        2. ENVIRONMENT DIVISION: This division is present but contains only the CONFIGURATION SECTION, which is empty in this program.
+
+        3. DATA DIVISION: This division contains the WORKING-STORAGE SECTION and LINKAGE SECTION. The WORKING-STORAGE SECTION defines various variables and data structures used throughout the program, including file names, flags, and copied structures from external files. The LINKAGE SECTION defines the communication area (DFHCOMMAREA) for passing data between programs.
+
+        4. PROCEDURE DIVISION: This division contains the main logic of the program, organized into several paragraphs that handle different aspects of the user deletion process, such as screen handling, user data retrieval, and deletion operations.
+        ]]>
+    </OverallStructure>
+    <MajorFunctionality>
+        <![CDATA[
+        The PROCEDURE DIVISION contains the following major paragraphs:
+
+        1. MAIN-PARA: This paragraph is the entry point of the program. It initializes variables, checks for first-time entry, and handles different function key inputs.
+
+        2. PROCESS-ENTER-KEY: This paragraph processes the ENTER key input. It validates the user ID input and retrieves user information from the USRSEC file.
+
+        3. DELETE-USER-INFO: This paragraph handles the user deletion process. It validates the user ID and calls the DELETE-USER-SEC-FILE paragraph to perform the actual deletion.
+
+        4. RETURN-TO-PREV-SCREEN: This paragraph handles the return to the previous screen by transferring control to another program.
+
+        5. SEND-USRDEL-SCREEN: This paragraph sends the user deletion screen to the terminal.
+
+        6. RECEIVE-USRDEL-SCREEN: This paragraph receives input from the user deletion screen.
+
+        7. POPULATE-HEADER-INFO: This paragraph populates the header information for the screen.
+
+        8. READ-USER-SEC-FILE: This paragraph reads the user information from the USRSEC file.
+
+        9. DELETE-USER-SEC-FILE: This paragraph deletes the user record from the USRSEC file.
+
+        10. CLEAR-CURRENT-SCREEN: This paragraph clears the current screen by initializing all fields and resending the screen.
+
+        11. INITIALIZE-ALL-FIELDS: This paragraph initializes all fields on the screen.
+        ]]>
+    </MajorFunctionality>
+    <ModulesContributeToProgramObjective>
+        <![CDATA[
+        The paragraphs in the PROCEDURE DIVISION work together to achieve the program's objective of deleting a user from the USRSEC file:
+
+        1. MAIN-PARA sets up the initial program state and handles user interactions.
+
+        2. PROCESS-ENTER-KEY and DELETE-USER-INFO validate user input and initiate the deletion process.
+
+        3. READ-USER-SEC-FILE and DELETE-USER-SEC-FILE handle the actual file operations for retrieving and deleting user data.
+
+        4. SEND-USRDEL-SCREEN, RECEIVE-USRDEL-SCREEN, and POPULATE-HEADER-INFO manage the user interface, allowing for user input and displaying results.
+
+        5. RETURN-TO-PREV-SCREEN, CLEAR-CURRENT-SCREEN, and INITIALIZE-ALL-FIELDS provide navigation and screen management functionality.
+
+        These modules work in concert to provide a complete user deletion functionality, from user input to file operations and result display.
+        ]]>
+    </ModulesContributeToProgramObjective>
+    <ModuleDependencies>
+        <![CDATA[
+        The paragraphs in COUSR03C have several dependencies and interactions:
+
+        1. MAIN-PARA calls PROCESS-ENTER-KEY, SEND-USRDEL-SCREEN, RECEIVE-USRDEL-SCREEN, CLEAR-CURRENT-SCREEN, DELETE-USER-INFO, and RETURN-TO-PREV-SCREEN based on user input and program flow.
+
+        2. PROCESS-ENTER-KEY calls READ-USER-SEC-FILE and SEND-USRDEL-SCREEN.
+
+        3. DELETE-USER-INFO calls READ-USER-SEC-FILE and DELETE-USER-SEC-FILE.
+
+        4. SEND-USRDEL-SCREEN calls POPULATE-HEADER-INFO.
+
+        5. CLEAR-CURRENT-SCREEN calls INITIALIZE-ALL-FIELDS and SEND-USRDEL-SCREEN.
+
+        These dependencies ensure that user input is properly validated, file operations are performed correctly, and the user interface is updated appropriately throughout the deletion process.
+        ]]>
+    </ModuleDependencies>
+</ProgramStructureAndModules>
+
+<ControlFlowAndLogic>
+    <ControlFlowExplanation>
+<![CDATA[
+The program COUSR03C follows a linear flow with conditional branching. It begins with initialization, then checks if it's the first entry or a re-entry. On first entry, it prepares the screen for user input. On re-entry, it processes the user's input based on the function key pressed. The main control flow is:
+
+1. Initialize variables and clear error flags
+2. Check if it's the first entry or re-entry
+3. If first entry, prepare and send the user deletion screen
+4. If re-entry, receive user input and process based on the function key:
+   - ENTER: Process the entered user ID
+   - PF3: Return to the previous screen
+   - PF4: Clear the current screen
+   - PF5: Delete the user
+   - PF12: Return to the admin menu
+   - Other keys: Display an error message
+5. Return to CICS with the transaction ID and commarea
+]]>
+    </ControlFlowExplanation>
+    <ControlStructureDescription>
+<![CDATA[
+The program uses the following control structures:
+
+1. IF-ELSE statements: Used for conditional branching throughout the program, such as checking the EIBCALEN and EIBAID values.
+
+2. PERFORM statements: Used to execute paragraphs, such as SEND-USRDEL-SCREEN, RECEIVE-USRDEL-SCREEN, and PROCESS-ENTER-KEY.
+
+3. EVALUATE statement: Used to process different function keys in the main logic.
+
+4. GO TO statement: Not used in this program.
+
+5. EXEC CICS statements: Used for CICS interactions such as SEND, RECEIVE, READ, DELETE, and RETURN.
+]]>
+    </ControlStructureDescription>
+    <ControlStructureConditions>
+<![CDATA[
+1. IF EIBCALEN = 0: Determines if it's the first entry to the program.
+
+2. IF NOT CDEMO-PGM-REENTER: Checks if it's the first time the program is entered.
+
+3. EVALUATE EIBAID: Determines which function key was pressed and executes the corresponding logic.
+
+4. IF NOT ERR-FLG-ON: Checks if an error flag is not set before proceeding with certain operations.
+
+5. EVALUATE WS-RESP-CD: Used in READ-USER-SEC-FILE and DELETE-USER-SEC-FILE paragraphs to handle different response codes from CICS operations.
+]]>
+    </ControlStructureConditions>
+    <NestedOrComplexControlStructures>
+<![CDATA[
+This program does not contain any complex nested control structures (two or more levels of nesting for IF statements, or one or more levels of nesting for other statements like PERFORM, EVALUATE, and SEARCH). The control structures used are relatively simple and straightforward, with only one level of nesting in most cases.
+]]>
+    </NestedOrComplexControlStructures>
+</ControlFlowAndLogic>
+
+
+<DecisionPointsAndConditionalLogic>
+    <MajorDecisionPoints>
+<![CDATA[
+1. Initial program entry check (EIBCALEN = 0)
+2. Program re-entry check (CDEMO-PGM-REENTER)
+3. Function key processing (EVALUATE EIBAID)
+4. User ID input validation (USRIDINI OF COUSR3AI = SPACES OR LOW-VALUES)
+5. CICS operation response handling (EVALUATE WS-RESP-CD)
+]]>
+    </MajorDecisionPoints>
+    <DecisionPointsConditionsRulesExplain>
+<![CDATA[
+1. Initial program entry check:
+   - Condition: IF EIBCALEN = 0
+   - Rule: If true, transfer control to COSGN00C program
+   - If false, proceed with normal program flow
+
+2. Program re-entry check:
+   - Condition: IF NOT CDEMO-PGM-REENTER
+   - Rule: If true, prepare and send the user deletion screen
+   - If false, receive user input and process based on function key
+
+3. Function key processing:
+   - Condition: EVALUATE EIBAID
+   - Rules:
+     - DFHENTER: Process the entered user ID
+     - DFHPF3: Return to the previous screen
+     - DFHPF4: Clear the current screen
+     - DFHPF5: Delete the user
+     - DFHPF12: Return to the admin menu
+     - OTHER: Display an error message
+
+4. User ID input validation:
+   - Condition: USRIDINI OF COUSR3AI = SPACES OR LOW-VALUES
+   - Rule: If true, set error flag and display error message
+   - If false, proceed with user lookup
+
+5. CICS operation response handling:
+   - Condition: EVALUATE WS-RESP-CD
+   - Rules:
+     - DFHRESP(NORMAL): Proceed with normal operation
+     - DFHRESP(NOTFND): Set error flag and display "User ID NOT found" message
+     - OTHER: Set error flag and display generic error message
+]]>
+    </DecisionPointsConditionsRulesExplain>
+    <ComplexOrNestedConditionalLogic>
+<![CDATA[
+The program does not contain complex or deeply nested conditional logic. The most notable conditional structure is the EVALUATE statement used for processing different function keys. While this involves multiple conditions, it is not considered complex as it is a single-level evaluation.
+
+The program uses straightforward IF-ELSE statements for most of its conditional logic, with no more than one level of nesting. This simple structure makes the program's flow easy to follow and understand.
+
+The CICS operation response handling in the READ-USER-SEC-FILE and DELETE-USER-SEC-FILE paragraphs uses EVALUATE statements to process different response codes, but these are also single-level evaluations and not considered complex.
+]]>
+    </ComplexOrNestedConditionalLogic>
+</DecisionPointsAndConditionalLogic>
+
+<DataFlowAndManipulation>
+    <DataFlow>
+        <![CDATA[
+        The program COUSR03C handles the deletion of a user from the USRSEC file. The data flow in this program is as follows:
+
+        1. The program receives input data from the user through the COUSR3AI map.
+        2. The user ID (USRIDINI) is read from the input map.
+        3. The program reads the user record from the USRSEC file using the entered user ID.
+        4. If the user is found, the program displays the user's information (first name, last name, and user type) on the screen.
+        5. When the user confirms the deletion, the program deletes the user record from the USRSEC file.
+        6. The program updates the screen with a success or error message based on the deletion operation.
+
+        Throughout the process, the program uses various working storage variables (WS-VARIABLES) to store and manipulate data, such as WS-MESSAGE for storing messages and WS-ERR-FLG for tracking error states.
+        ]]>
+    </DataFlow>
+    <DataTransformations>
+        <![CDATA[
+        The program performs the following data transformations and manipulations:
+
+        1. Date and Time Formatting: The program formats the current date and time for display on the screen. It uses the FUNCTION CURRENT-DATE to get the current date and time, then formats it into WS-CURDATE-MM-DD-YY and WS-CURTIME-HH-MM-SS for display.
+
+        2. Error Flag Manipulation: The program uses level-88 condition names (ERR-FLG-ON and ERR-FLG-OFF) to set and check the error flag (WS-ERR-FLG) throughout the program execution.
+
+        3. User Modification Flag: Similar to the error flag, the program uses level-88 condition names (USR-MODIFIED-YES and USR-MODIFIED-NO) to track whether the user data has been modified.
+
+        4. Message Handling: The program manipulates the WS-MESSAGE variable to store various messages based on the program's execution flow and user actions. These messages are then displayed on the screen.
+
+        5. Data Movement: The program moves data between the map fields (COUSR3AI and COUSR3AO) and the working storage variables, as well as between the USRSEC file record (SEC-USER-DATA) and the map fields.
+
+        No complex calculations or data transformations are performed in this program, as its primary function is to delete a user record based on the provided user ID.
+        ]]>
+    </DataTransformations>
+</DataFlowAndManipulation>
+<ExternalInteractionsAndDependencies>
+    <ExternalSystemsInteraction>
+        <![CDATA[
+        The program COUSR03C interacts with the following external systems and components:
+
+        1. CICS (Customer Information Control System): The program is a CICS COBOL program and uses CICS commands for various operations, such as EXEC CICS RECEIVE, EXEC CICS SEND, EXEC CICS READ, and EXEC CICS DELETE.
+
+        2. BMS (Basic Mapping Support): The program uses BMS maps (COUSR3A) for screen input and output operations.
+
+        3. USRSEC File: This is the main external file that the program interacts with to read and delete user records.
+
+        4. Other Programs: The program can transfer control to other programs based on certain conditions:
+           - COSGN00C: If the EIBCALEN is 0, indicating no communication area was passed.
+           - COADM01C: When the user presses PF3 or PF12 to return to the admin menu.
+
+        These interactions are crucial for the program's functionality, as they allow it to handle user input, display output, manage data storage, and integrate with the larger CardDemo application system.
+        ]]>
+    </ExternalSystemsInteraction>
+    <ExternalEntitiesDataExchange>
+        <![CDATA[
+        1. Database Tables
+            Input:
+            N/A
+
+            Output:
+            N/A
+
+        2. Datasets/Files
+            Input:
+            - 1. USRSEC: This is the user security file that contains user information. The program reads user records from this file using the EXEC CICS READ command with the UPDATE option.
+
+            Output:
+            - 1. USRSEC: The program deletes user records from this file using the EXEC CICS DELETE command when the user confirms the deletion action.
+
+        The program exchanges data with the USRSEC file in the following ways:
+        - Reading: When a user ID is entered, the program reads the corresponding record from the USRSEC file into the SEC-USER-DATA structure.
+        - Deleting: When the user confirms the deletion (by pressing PF5), the program deletes the corresponding record from the USRSEC file.
+
+        The program also exchanges data with the user through the BMS map COUSR3A:
+        - Input: Receives user input (user ID) through the COUSR3AI map.
+        - Output: Displays user information and messages through the COUSR3AO map.
+        ]]>
+    </ExternalEntitiesDataExchange>
+    <ExternalInteractionsPotentialImpacts>
+        <![CDATA[
+        The external interactions in this program have several potential impacts and considerations:
+
+        1. File Access Contention: Since the program reads the USRSEC file with the UPDATE option, it may lead to contention issues if multiple users try to access or modify the same user record simultaneously. Proper error handling and user feedback are crucial in such scenarios.
+
+        2. Data Integrity: The deletion of user records from the USRSEC file is a critical operation. Any issues during the delete operation (e.g., system failures, CICS errors) could lead to data inconsistencies. The program should ensure that the deletion is completed successfully and provide appropriate feedback to the user.
+
+        3. Security Implications: As this program deals with user deletion, it's crucial to ensure that only authorized personnel can access and use this functionality. The program itself doesn't implement any security checks, so it's important that access to this program is restricted at the CICS or external security manager level.
+
+        4. User Interface Responsiveness: The program's interaction with the USRSEC file and the use of CICS commands for screen operations can affect the responsiveness of the user interface. Proper error handling and informative messages are important to keep the user informed about the progress of their actions.
+
+        5. Integration with Other Systems: The program's ability to transfer control to other programs (COSGN00C and COADM01C) implies that it's part of a larger system. Changes to this program or the structure of the USRSEC file could potentially impact other parts of the system that rely on the same data or functionality.
+
+        6. Error Handling and Recovery: The program includes error handling for file operations, but it's important to ensure that all possible error scenarios are covered and that the program can recover gracefully from errors, providing clear feedback to the user and maintaining data integrity.
+
+        These considerations highlight the importance of thorough testing, proper error handling, and careful system integration when maintaining or modifying this program.
+        ]]>
+    </ExternalInteractionsPotentialImpacts>
+</ExternalInteractionsAndDependencies>
+
+
+
+
+
+</OverallProgramLogicAndFlow>
+
+
+
+<ProgramLogicAndFunctionality>
+
+<ProgramLogic1>
+     <![CDATA[
+     This rule is responsible for populating the header information on the user deletion screen. It ensures that the screen displays consistent and relevant system and temporal information, providing context to the user. The rule performs the following actions:
+
+     1. Sets the main title and subtitle of the application at the top of the screen.
+     2. Displays the current transaction ID and program name, allowing users to identify which part of the system they are interacting with.
+     3. Shows the current date in the format MM/DD/YY, derived from the system date.
+     4. Presents the current time in the format HH:MM:SS, also obtained from the system time.
+
+     By implementing this rule, the application maintains a standardized header across screens, enhancing user orientation and facilitating auditing processes. This is a common practice in mainframe applications to provide users with immediate context about their current location within the system and the timing of their actions.
+     ]]>
+</ProgramLogic1>
+
+
+
+<ProgramLogic2>
+     <![CDATA[
+     This rule manages the display of error messages and status information to the user throughout the program's execution. It determines what message should be shown based on various conditions and actions within the program. The rule involves setting appropriate messages for different scenarios, such as:
+
+     1. When an invalid key is pressed by the user
+     2. When a user is successfully deleted from the system
+     3. When a user ID is not found in the database
+     4. When there are issues with reading or updating user information
+
+     Once the appropriate message is determined, the rule ensures that it is displayed on the screen for the user to see. This provides immediate feedback to the user about the result of their actions or any errors that may have occurred during the program's operation.
+
+     The rule also controls the color of the displayed message in some cases. For instance, when a user is successfully deleted, the message is displayed in green to indicate a positive outcome.
+
+     By managing these messages, the rule helps to keep the user informed about the status of their interactions with the system, enhancing the overall user experience and providing clear communication about the results of various operations.
+     ]]>
+</ProgramLogic2>
+
+
+
+<ProgramLogic3>
+     <![CDATA[
+     This rule is responsible for populating user information fields on the screen when a user ID is entered. The process begins when an administrator enters a user ID. The system then retrieves the corresponding user data from a secure file. If the user is found, the rule assigns the user's first name, last name, and user type to the respective fields on the screen. This allows the administrator to verify the details of the user they intend to delete before proceeding with the deletion process. The rule serves as a crucial step in the user deletion workflow, ensuring that the correct user is identified and confirmed before any deletion action is taken. By displaying the user's information, it provides an additional layer of verification to prevent accidental deletion of the wrong user account.
+
+     
+     ]]>
+</ProgramLogic3>
+
+<ProgramLogic4>
+     <![CDATA[
+     This rule governs the process of deleting a user from the system. It ensures that only valid and existing users can be removed, maintaining data integrity and security. The rule operates as follows:
+
+     1. The system first checks if a user ID has been provided. If the ID field is empty, an error message is displayed, and the deletion process is halted.
+
+     2. If a user ID is provided, the system attempts to locate the corresponding user record in the security file.
+
+     3. If the user is found in the file, their details (such as first name, last name, and user type) are retrieved and displayed on the screen.
+
+     4. The system then prompts the user to confirm the deletion by pressing a specific key.
+
+     5. Upon confirmation, the user record is permanently removed from the security file.
+
+     6. If the deletion is successful, a confirmation message is displayed, indicating that the user has been removed from the system.
+
+     7. If at any point the system encounters an error (such as the user not being found or a file access issue), appropriate error messages are displayed, and the deletion process is aborted.
+
+     This rule ensures that only authorized personnel can remove users from the system, and that the removal process is carried out accurately and securely, maintaining the integrity of the user database.
+     ]]>
+</ProgramLogic4>
+
+
+
+
+
+</ProgramLogicAndFunctionality>
+
+
+
+<TheDataFlowAndDataDependencies>
+
+Here's the detailed explanation of the program COUSR03C, focusing on data flow and dependencies:
+
+<DataFlow>
+<![CDATA[
+1. User Input:
+   - The program receives user input through the COUSR3AI map, specifically the USRIDINI field.
+   - This input is used to identify the user to be deleted.
+
+2. File Read:
+   - The program reads the USRSEC file using the EXEC CICS READ command.
+   - The user ID (SEC-USR-ID) is used as the key to retrieve the user's information.
+   - Retrieved data is stored in the SEC-USER-DATA structure, which includes fields like SEC-USR-FNAME, SEC-USR-LNAME, and SEC-USR-TYPE.
+
+3. Screen Display:
+   - User information is displayed on the screen using the COUSR3AO map.
+   - Data flows from SEC-USER-DATA to the corresponding fields in COUSR3AO:
+     * SEC-USR-FNAME to FNAMEI
+     * SEC-USR-LNAME to LNAMEI
+     * SEC-USR-TYPE to USRTYPEI
+
+4. File Delete:
+   - When the user confirms deletion (by pressing PF5), the program uses EXEC CICS DELETE to remove the user record from the USRSEC file.
+   - The SEC-USR-ID is used as the key for deletion.
+
+5. Message Handling:
+   - Various messages are stored in WS-MESSAGE based on the operation's outcome.
+   - These messages are then displayed on the screen using the ERRMSGO field of COUSR3AO.
+
+6. Program Flow Control:
+   - The program uses CDEMO-TO-PROGRAM to determine which program to transfer control to when exiting.
+   - This value is set based on user actions (e.g., pressing PF3 or PF12).
+
+7. Date and Time:
+   - Current date and time are retrieved using FUNCTION CURRENT-DATE.
+   - This data flows into WS-CURDATE-DATA and is then formatted and displayed on the screen in CURDATEO and CURTIMEO fields.
+]]>
+</DataFlow>
+
+<DataDependency>
+<![CDATA[
+1. User Identification Dependency:
+   - The entire delete operation depends on the user ID input (USRIDINI).
+   - This ID is crucial for both retrieving and deleting the user record.
+
+2. File Access Dependency:
+   - The program's ability to read and delete records depends on the availability and integrity of the USRSEC file.
+   - Any issues with file access could prevent the program from functioning correctly.
+
+3. Screen Map Dependencies:
+   - The program relies on the COUSR3AI and COUSR3AO maps for input and output.
+   - These maps must be correctly defined and available for the program to interact with the user.
+
+4. Error Handling Dependency:
+   - The WS-ERR-FLG variable is used throughout the program to control flow based on error conditions.
+   - Many operations depend on this flag to determine whether to proceed or display error messages.
+
+5. COMMAREA Dependency:
+   - The program depends on the CARDDEMO-COMMAREA for maintaining state between transactions.
+   - It uses this area to store and retrieve information like the previous program (CDEMO-FROM-PROGRAM) and user type (CDEMO-USER-TYPE).
+
+6. User Type Dependency:
+   - The program doesn't explicitly check user types, but the SEC-USR-TYPE field is displayed, indicating a potential dependency on user roles for access control in the broader application.
+
+7. PF Key Dependency:
+   - The program's flow is heavily dependent on the PF keys pressed by the user (e.g., PF3, PF4, PF5, PF12).
+   - Each key triggers a different action, affecting the program's behavior and data flow.
+
+8. Date and Time Dependency:
+   - The display of current date and time depends on the system's ability to provide accurate date and time information.
+
+9. Message Display Dependency:
+   - The program's ability to communicate with the user depends on the WS-MESSAGE variable and the ERRMSGO field in the screen map.
+   - Various parts of the program set WS-MESSAGE based on different conditions, creating a dependency between the operation results and user feedback.
+]]>
+</DataDependency>
+
+
+
+
+
+</TheDataFlowAndDataDependencies>
+
+
+
+<DatabaseInformation>
+
+Here's the comprehensive documentation for the database interactions within the COBOL program COUSR03C:
+
+<DatabaseOverview>
+<![CDATA[
+N/A
+]]>
+</DatabaseOverview>
+
+<DatabaseConnectivity>
+<![CDATA[
+N/A
+]]>
+</DatabaseConnectivity>
+
+
+
+Based on the provided information and instructions, here is the comprehensive documentation for the database interactions within the COBOL program COUSR03C:
+
+<DatabaseSchema>
+<![CDATA[
+N/A
+]]>
+</DatabaseSchema>
+
+
+
+Here's the comprehensive documentation for the database interactions within the COBOL program COUSR03C:
+
+<SQLQueriesAndCommands>
+<![CDATA[
+N/A
+]]>
+</SQLQueriesAndCommands>
+
+<DataFlow>
+<![CDATA[
+N/A
+]]>
+</DataFlow>
+
+<ErrorHandlingAndTransactionManagement>
+<![CDATA[
+N/A
+]]>
+</ErrorHandlingAndTransactionManagement>
+
+<AdditionalConsiderations>
+<![CDATA[
+While this COBOL program (COUSR03C) does not directly interact with SQL databases, it does perform file operations on a user security file (USRSEC). The program uses CICS commands for file operations instead of SQL statements. Here are some relevant details:
+
+1. File Operations:
+   - The program reads from and deletes records from the USRSEC file.
+   - File operations are performed using CICS commands (EXEC CICS READ and EXEC CICS DELETE).
+
+2. Data Structure:
+   - The user data is stored in the SEC-USER-DATA structure, which includes fields like SEC-USR-ID, SEC-USR-FNAME, SEC-USR-LNAME, SEC-USR-PWD, and SEC-USR-TYPE.
+
+3. Error Handling:
+   - The program uses WS-RESP-CD and WS-REAS-CD to capture response and reason codes from CICS commands.
+   - Error conditions are checked after each file operation, and appropriate error messages are displayed to the user.
+
+4. Transaction Management:
+   - While not explicitly shown in the code snippet, CICS handles transaction management for file operations.
+   - The program does not include explicit commit or rollback operations.
+
+5. Data Flow:
+   - User input (User ID) is received from the screen (COUSR3AI).
+   - The program reads the user record from the USRSEC file based on the input User ID.
+   - User details are displayed on the screen (COUSR3AO).
+   - Upon user confirmation, the program deletes the user record from the USRSEC file.
+
+6. Best Practices:
+   - The program uses structured error handling and provides user-friendly error messages.
+   - It includes input validation to ensure the User ID is not empty before performing file operations.
+   - The program follows a clear separation of concerns, with distinct sections for screen handling, file operations, and business logic.
+]]>
+</AdditionalConsiderations>
+
+
+
+
+
+</DatabaseInformation>
+
+
+
+<ErrorAndAbendHandling>
+
+<OverallStrategy>
+<![CDATA[
+The COBOL program COUSR03C implements a straightforward error handling strategy. It primarily uses a flag variable WS-ERR-FLG to indicate the presence of errors. When an error occurs, this flag is set to 'Y', and an error message is stored in WS-MESSAGE. The program then typically redirects the flow to display the error message to the user through the SEND-USRDEL-SCREEN paragraph.
+]]>
+</OverallStrategy>
+
+<CommonErrorConditions>
+<ListErrors>
+<![CDATA[
+1. Empty User ID input
+2. User ID not found in the USRSEC file
+3. File access errors when reading or deleting from the USRSEC file
+4. Invalid key pressed by the user
+]]>
+</ListErrors>
+<ErrorSources>
+<![CDATA[
+1. User input: When the user fails to enter a User ID
+2. Database: When the specified User ID doesn't exist in the USRSEC file
+3. File system: When there are issues accessing or modifying the USRSEC file
+4. User interaction: When the user presses an invalid function key
+]]>
+</ErrorSources>
+</CommonErrorConditions>
+
+<ErrorDetectionMechanisms>
+<DetectMethods>
+<![CDATA[
+1. The program checks for empty User ID input using a conditional statement.
+2. File access errors are detected by checking the response codes (WS-RESP-CD and WS-REAS-CD) after EXEC CICS commands for file operations.
+3. Invalid key presses are detected in the EIBAID evaluation in the main procedure division.
+]]>
+</DetectMethods>
+<FunctionsAndExceptionCheck>
+<![CDATA[
+The program uses EXEC CICS commands for file operations and checks the response codes (WS-RESP-CD and WS-REAS-CD) to detect errors. For example:
+
+EXEC CICS READ
+    DATASET   (WS-USRSEC-FILE)
+    INTO      (SEC-USER-DATA)
+    LENGTH    (LENGTH OF SEC-USER-DATA)
+    RIDFLD    (SEC-USR-ID)
+    KEYLENGTH (LENGTH OF SEC-USR-ID)
+    UPDATE
+    RESP      (WS-RESP-CD)
+    RESP2     (WS-REAS-CD)
+END-EXEC.
+
+EVALUATE WS-RESP-CD
+    WHEN DFHRESP(NORMAL)
+        ...
+    WHEN DFHRESP(NOTFND)
+        MOVE 'Y'     TO WS-ERR-FLG
+        MOVE 'User ID NOT found...' TO WS-MESSAGE
+        ...
+    WHEN OTHER
+        MOVE 'Y'     TO WS-ERR-FLG
+        MOVE 'Unable to lookup User...' TO WS-MESSAGE
+        ...
+END-EVALUATE.
+]]>
+</FunctionsAndExceptionCheck>
+</ErrorDetectionMechanisms>
+
+<ErrorResponsesAndRecoveryActions>
+<ImmediateResponse>
+<![CDATA[
+When an error is detected:
+1. The error flag WS-ERR-FLG is set to 'Y'.
+2. An appropriate error message is stored in WS-MESSAGE.
+3. The program typically redirects to the SEND-USRDEL-SCREEN paragraph to display the error message to the user.
+
+For example:
+MOVE 'Y'     TO WS-ERR-FLG
+MOVE 'User ID NOT found...' TO WS-MESSAGE
+MOVE -1       TO USRIDINL OF COUSR3AI
+PERFORM SEND-USRDEL-SCREEN
+]]>
+</ImmediateResponse>
+<RecoveryProcedures>
+<![CDATA[
+The program doesn't implement specific recovery procedures. After displaying an error message, it allows the user to retry the operation or choose a different action. The program continues to function, waiting for the next user input or action.
+]]>
+</RecoveryProcedures>
+</ErrorResponsesAndRecoveryActions>
+
+<ErrorLoggingMechanisms>
+<MechanismsDetails>
+<![CDATA[
+The program does not implement a dedicated error logging mechanism. Errors are primarily communicated to the user through the screen interface.
+]]>
+</MechanismsDetails>
+<ErrorLogsFormatAndContent>
+<![CDATA[
+N/A
+]]>
+</ErrorLogsFormatAndContent>
+</ErrorLoggingMechanisms>
+
+<UserNotificationsAndInterfaceHandling>
+<ErrorsCommunication>
+<![CDATA[
+Errors are communicated to the user through the screen interface. The program uses the WS-MESSAGE variable to store error messages, which are then displayed on the screen using the SEND-USRDEL-SCREEN paragraph.
+]]>
+</ErrorsCommunication>
+<ErrorMessagesInterface>
+<![CDATA[
+Error messages are displayed in the ERRMSGO field of the COUSR3AO map. The color of the error message is typically set to red for visibility:
+
+MOVE WS-MESSAGE TO ERRMSGO OF COUSR3AO
+MOVE DFHRED TO ERRMSGC OF COUSR3AO
+
+The program also sets the cursor position to guide the user's attention to the field that needs correction:
+
+MOVE -1 TO USRIDINL OF COUSR3AI
+]]>
+</ErrorMessagesInterface>
+</UserNotificationsAndInterfaceHandling>
+
+
+
+</ErrorAndAbendHandling>
+
+
+
+<TheInputAndOutputProcessing>
+
+Here's the detailed explanation of the program COUSR03C based on the provided instructions:
+
+<InputRequirements>
+    <InputDataTypeAndSignificance>
+        <![CDATA[
+        The main input for this program is the user ID (USRIDINI) of the user to be deleted. This is a critical piece of information as it uniquely identifies the user record to be removed from the system.
+        ]]>
+    </InputDataTypeAndSignificance>
+    <InputSource>
+        <![CDATA[
+        The user ID is input by the user through the CICS screen interface (COUSR3AI). It is entered in the USRIDIN field of the screen.
+        ]]>
+    </InputSource>
+    <InputFormatAndStructure>
+        <FieldLengths>
+            <![CDATA[
+            User ID (USRIDINI): 8 characters
+            ]]>
+        </FieldLengths>
+        <MandatoryFields>
+            <![CDATA[
+            User ID (USRIDINI) is mandatory. The program checks if it's empty or contains low-values.
+            ]]>
+        </MandatoryFields>
+        <DataTypes>
+            <![CDATA[
+            User ID (USRIDINI): Alphanumeric (PIC X(8))
+            ]]>
+        </DataTypes>
+        <AdditionalRequirements>
+            <![CDATA[
+            The user ID must exist in the USRSEC file for the deletion to be successful.
+            ]]>
+        </AdditionalRequirements>
+    </InputFormatAndStructure>
+    
+</InputRequirements>
+<OutputSpecifications>
+    <OutputPurposeAndDownstreamUsage>
+        <![CDATA[
+        The main output of this program is the updated USRSEC file with the specified user record deleted. It also provides feedback to the user through the CICS screen, displaying success or error messages.
+        ]]>
+    </OutputPurposeAndDownstreamUsage>
+    <OutputDestination>
+        <![CDATA[
+        The primary output (deleted user record) is written back to the USRSEC file. User feedback messages are displayed on the CICS screen (COUSR3AO).
+        ]]>
+    </OutputDestination>
+    <OutputFormatAndStructure>
+        <FormattingRules>
+            <![CDATA[
+            Error messages are displayed in red color (DFHRED) on the CICS screen.
+            Success messages are displayed in green color (DFHGREEN) on the CICS screen.
+            ]]>
+        </FormattingRules>
+        <Structure>
+            <![CDATA[
+            The CICS screen (COUSR3AO) displays the following information:
+            - User ID
+            - First Name
+            - Last Name
+            - User Type
+            - Error or success message
+            The USRSEC file structure remains unchanged, but the specified user record is removed.
+            ]]>
+        </Structure>
+    </OutputFormatAndStructure>
+</OutputSpecifications>
+<ErrorHandling>
+    <InputDataErrorsHandling>
+        <![CDATA[
+        1. If the User ID is empty or contains low-values, the program sets WS-ERR-FLG to 'Y' and displays the message "User ID can NOT be empty...".
+        2. If the User ID is not found in the USRSEC file, the program sets WS-ERR-FLG to 'Y' and displays the message "User ID NOT found...".
+        3. For any other errors during file operations, appropriate error messages are displayed, and WS-ERR-FLG is set to 'Y'.
+        ]]>
+    </InputDataErrorsHandling>
+    <OutputErrorsHandling>
+        <![CDATA[
+        1. If there's an error during the deletion process (e.g., CICS DELETE operation fails), the program displays the message "Unable to Update User..." and sets WS-ERR-FLG to 'Y'.
+        2. All error messages are displayed in red color on the CICS screen to draw user attention.
+        3. In case of any unexpected CICS responses, the program displays the response and reason codes for debugging purposes.
+        ]]>
+    </OutputErrorsHandling>
+</ErrorHandling>
+
+
+
+
+
+</TheInputAndOutputProcessing>
+
+
+
+<IntegrationInformation>
+
+<IntegrationOverview>
+<![CDATA[
+The program COUSR03C integrates with the CICS (Customer Information Control System) transaction processing system. This integration is essential for the program's functionality as it handles user deletion operations in a CICS environment.
+]]>
+<PurposeOfIntegration>
+<![CDATA[
+The purpose of the CICS integration is to facilitate the deletion of user records from the USRSEC file within a CICS environment. It allows the program to interact with CICS services for screen handling, file operations, and transaction management.
+]]>
+</PurposeOfIntegration>
+<IntegrationInteractions>
+<![CDATA[
+The program interacts with CICS through various EXEC CICS commands. It uses CICS services for sending and receiving map data (SEND MAP and RECEIVE MAP), reading and deleting records from the USRSEC file (READ and DELETE), and managing program flow (XCTL and RETURN).
+]]>
+</IntegrationInteractions>
+</IntegrationOverview>
+
+<IntegrationType>
+<![CDATA[
+The integration type is CICS (Customer Information Control System). The program uses CICS commands for transaction processing, screen handling, and file operations.
+]]>
+</IntegrationType>
+
+<InteractedExternalSystems>
+<![CDATA[
+The program interacts with the CICS transaction processing system.
+]]>
+</InteractedExternalSystems>
+
+<ExternalSystemIntegration>
+<SystemType>
+<![CDATA[
+CICS is a transaction processing system that provides online transaction management and connectivity for applications on IBM mainframe systems.
+]]>
+</SystemType>
+<TechStack>
+<![CDATA[
+CICS typically runs on IBM mainframe systems using z/OS. It supports various programming languages, including COBOL, and provides services for transaction processing, data management, and communication.
+]]>
+</TechStack>
+<IntegrationRoleOfExternalSystem>
+<![CDATA[
+CICS plays a crucial role in this integration by providing the runtime environment for the COUSR03C program. It manages the transaction processing, handles user interactions through BMS (Basic Mapping Support) maps, and facilitates file operations on the USRSEC file.
+]]>
+</IntegrationRoleOfExternalSystem>
+</ExternalSystemIntegration>
+
+<ExternalSystemDataFlow>
+<![CDATA[
+The data flow between COUSR03C and CICS involves:
+1. Receiving user input from the COUSR3A map using EXEC CICS RECEIVE MAP.
+2. Reading user records from the USRSEC file using EXEC CICS READ.
+3. Deleting user records from the USRSEC file using EXEC CICS DELETE.
+4. Sending output to the user interface using EXEC CICS SEND MAP.
+5. Transferring control to other programs using EXEC CICS XCTL.
+6. Returning control to CICS using EXEC CICS RETURN.
+]]>
+</ExternalSystemDataFlow>
+
+<ExternalSystemInterface>
+<![CDATA[
+The interface between COUSR03C and CICS primarily uses EXEC CICS commands. Key interfaces include:
+1. BMS (Basic Mapping Support) for screen handling, using the COUSR3A map.
+2. File Control commands for accessing the USRSEC file (READ and DELETE).
+3. Program Control commands for transferring control between programs (XCTL).
+4. CICS COMMAREA for passing data between programs.
+The program uses standard CICS APIs for these operations, adhering to CICS programming conventions and protocols.
+]]>
+</ExternalSystemInterface>
+
+<ExternalSystemErrorsHandling>
+<![CDATA[
+Error handling in the integration between COUSR03C and CICS involves:
+1. Checking RESP and RESP2 codes after EXEC CICS commands to detect errors.
+2. Setting the WS-ERR-FLG variable to 'Y' when errors are detected.
+3. Displaying error messages on the screen using the ERRMSGO field of the COUSR3AO map.
+4. Using conditional logic (EVALUATE statements) to handle different response codes from CICS commands.
+5. Providing user-friendly error messages for common issues like record not found.
+The program does not implement specific logging mechanisms, but it does use screen messages to inform the user of errors.
+]]>
+</ExternalSystemErrorsHandling>
+
+
+
+</IntegrationInformation>
+
+
+
+<ScreenDocumentation>
+
+<Screen1>
+
+<ScreenRepresentation>
+
+<ScreenHtmlRepresentation>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;COUSR03 Screen&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            background-color: #000000;
+            color: #00FF00;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 20px;
+        }
+        .blue { color: #0000FF; }
+        .yellow { color: #FFFF00; }
+        .green { color: #00FF00; }
+        .turquoise { color: #40E0D0; }
+        .red { color: #FF0000; }
+        .underline { text-decoration: underline; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;pre&gt;
+&lt;span class="blue"&gt;Tran:&lt;/span&gt; &lt;span class="blue"&gt;CUSD&lt;/span&gt;                 &lt;span class="yellow"&gt;      AWS Mainframe Modernization       &lt;/span&gt;    &lt;span class="blue"&gt;Date: 08/22/22&lt;/span&gt;
+&lt;span class="blue"&gt;Prog:&lt;/span&gt; &lt;span class="blue"&gt;COUSR03 &lt;/span&gt;             &lt;span class="yellow"&gt;              CardDemo                  &lt;/span&gt;    &lt;span class="blue"&gt;Time: 17:02:44&lt;/span&gt;
+
+                                  &lt;span style="color: #FFFFFF;"&gt;Delete User&lt;/span&gt;
+
+     &lt;span class="green"&gt;Enter User ID:&lt;/span&gt; &lt;span class="green underline"&gt;ADMIN001&lt;/span&gt;
+
+     &lt;span class="yellow"&gt;**********************************************************************&lt;/span&gt;
+
+     &lt;span class="turquoise"&gt;First Name:&lt;/span&gt; &lt;span class="blue underline"&gt;John                &lt;/span&gt;
+
+     &lt;span class="turquoise"&gt;Last Name:&lt;/span&gt; &lt;span class="blue underline"&gt;Doe                 &lt;/span&gt;
+
+     &lt;span class="turquoise"&gt;User Type: &lt;/span&gt;&lt;span class="blue underline"&gt;A&lt;/span&gt; &lt;span class="blue"&gt;(A=Admin, U=User)&lt;/span&gt;
+
+
+&lt;span class="red"&gt;                                                                              &lt;/span&gt;
+&lt;span class="yellow"&gt;ENTER=Fetch  F3=Back  F4=Clear  F5=Delete&lt;/span&gt;
+    &lt;/pre&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</ScreenHtmlRepresentation>
+<ScreenWidth>640</ScreenWidth>
+<ScreenHeight>480</ScreenHeight>
+
+</ScreenRepresentation>
+
+<BusinessFunction>
+<![CDATA[
+This BMS map defines a screen for deleting a user in a card demo application. It contributes to user interactions by:
+
+1. Displaying a form to enter a user ID for deletion
+2. Showing user details (first name, last name, user type) after fetching the user information
+3. Providing options to fetch user details, delete the user, go back, or clear the screen
+4. Displaying error messages or operation results
+
+The screen allows administrators to view user information before confirming deletion, enhancing data accuracy and preventing accidental deletions.
+]]>
+</BusinessFunction>
+
+<ScreenIdentifiers>
+<![CDATA[
+Map Name: COUSR3A
+Map Set Name: COUSR03
+]]>
+</ScreenIdentifiers>
+
+<PFKeysAndActions>
+<![CDATA[
+1. ENTER: Fetch user details for the entered User ID
+2. F3: Go back to the previous screen
+3. F4: Clear the current screen
+4. F5: Delete the user with the displayed information
+]]>
+</PFKeysAndActions>
+
+
+
+</Screen1>
+
+
+
+</ScreenDocumentation>
+
+
+
+<ProgramsCalled>
+
+<ApplicationPrograms>1. COADM01C - The main purpose of COADM01C is to provide an admin menu for administrative users in the CardDemo application. It displays a list of options for various administrative tasks and processes user selections.
+2. COSGN00C - The main purpose of COSGN00C is to provide a sign-on screen for the CardDemo application. It handles user authentication by validating the entered user ID and password against a user security file.
+</ApplicationPrograms>
+<SystemPrograms>
+DFHAID, DFHBMSCA
+</SystemPrograms>
+<MissingPrograms>
+N/A
+</MissingPrograms>
+
+</ProgramsCalled>
+
+</Documentation>

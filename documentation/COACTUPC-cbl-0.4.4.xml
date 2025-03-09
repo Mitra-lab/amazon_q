@@ -1,0 +1,1311 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here is my analysis of the COACTUPC program based on the provided instructions:
+
+<ProgramName>
+<![CDATA[
+COACTUPC
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COACTUPC is to handle account updates in the CardDemo application. It allows users to view and modify account and customer details, processes user inputs, performs data validation, and updates the relevant database records.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+COACTUPC operates within the context of a credit card management system. It is part of the account maintenance workflow, allowing administrators or authorized users to update account and customer information. This program plays a crucial role in maintaining accurate and up-to-date customer and account records in the credit card business process.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Account Data Display: The program retrieves and displays existing account information (ACCT-ID, ACCT-ACTIVE-STATUS, ACCT-CURR-BAL, etc.) from the account master file (ACCTDAT).
+
+2. Customer Data Display: It fetches and shows customer details (CUST-ID, CUST-FIRST-NAME, CUST-LAST-NAME, etc.) from the customer master file (CUSTDAT).
+
+3. Data Validation: The program performs extensive validation on user inputs, including checks for date formats, numeric values, and field-specific validations (e.g., SSN, phone numbers).
+
+4. Account Update: It allows modification of account details such as credit limit, cash credit limit, and account status.
+
+5. Customer Update: Users can update customer information like name, address, phone numbers, and SSN.
+
+6. Database Update: The program writes updated account and customer information back to the respective master files (ACCTDAT and CUSTDAT).
+
+7. Error Handling: It includes comprehensive error handling and displays appropriate error messages to the user.
+
+8. Navigation: The program supports navigation between different screens and returning to the main menu.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. ACCTDAT: This file contains the account master data. The program reads this file to retrieve existing account information for display and update.
+2. CUSTDAT: This file stores the customer master data. The program reads this file to fetch current customer details associated with the account.
+3. CARDDAT: This file likely contains card-related information, although its specific use in this program is not clear from the given code.
+
+Output Files:
+1. ACCTDAT: The program writes updated account information back to this file after user modifications and validation.
+2. CUSTDAT: Updated customer information is written back to this file after changes are made and validated.
+
+Miscellaneous Input:
+1. User Input: The program receives user input through the CACTUPA map, including account details, customer information, and various other fields for update.
+2. DFHCOMMAREA: The program receives data from the common area, which likely contains session information and data passed from other programs.
+
+Miscellaneous Output:
+1. Screen Output: The program sends data to the CACTUPA map for display, including account and customer details, error messages, and informational messages.
+2. DFHCOMMAREA: The program updates the common area with relevant information before passing control to other programs.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not appear to interact with any external systems beyond the CICS environment it operates within. It primarily interacts with CICS files (ACCTDAT, CUSTDAT, CARDDAT) and uses CICS commands for screen handling and program control. The program can be called from and return to other programs within the CardDemo application, such as COMEN01C (the main menu program), but these are not considered external systems in this context.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+
+
+<OverallProgramLogicAndFlow>
+
+<FlowchartRepresentation>
+<![CDATA[
+digraph G {
+    node [shape=oval, style=filled, fillcolor=lightgray];
+    
+    "PROCEDURE DIVISION" -> "0000-MAIN" [label="Program start"];
+    "0000-MAIN" -> "1000-PROCESS-INPUTS" [label="if not CCARD-AID-PFK03"];
+    "0000-MAIN" -> "COMMON-RETURN" [label="if CCARD-AID-PFK03"];
+    
+    "1000-PROCESS-INPUTS" -> "1100-RECEIVE-MAP";
+    "1100-RECEIVE-MAP" -> "1200-EDIT-MAP-INPUTS";
+    "1200-EDIT-MAP-INPUTS" -> "1205-COMPARE-OLD-NEW" [label="if not ACUP-DETAILS-NOT-FETCHED"];
+    "1200-EDIT-MAP-INPUTS" -> "1210-EDIT-ACCOUNT" [label="if ACUP-DETAILS-NOT-FETCHED"];
+    
+    "1205-COMPARE-OLD-NEW" -> "1215-EDIT-MANDATORY" [label="if changes detected"];
+    "1215-EDIT-MANDATORY" -> "1220-EDIT-YESNO";
+    "1220-EDIT-YESNO" -> "1225-EDIT-ALPHA-REQD";
+    "1225-EDIT-ALPHA-REQD" -> "1230-EDIT-ALPHANUM-REQD";
+    "1230-EDIT-ALPHANUM-REQD" -> "1235-EDIT-ALPHA-OPT";
+    "1235-EDIT-ALPHA-OPT" -> "1240-EDIT-ALPHANUM-OPT";
+    "1240-EDIT-ALPHANUM-OPT" -> "1245-EDIT-NUM-REQD";
+    "1245-EDIT-NUM-REQD" -> "1250-EDIT-SIGNED-9V2";
+    "1250-EDIT-SIGNED-9V2" -> "1260-EDIT-US-PHONE-NUM";
+    "1260-EDIT-US-PHONE-NUM" -> "1265-EDIT-US-SSN";
+    "1265-EDIT-US-SSN" -> "1270-EDIT-US-STATE-CD";
+    "1270-EDIT-US-STATE-CD" -> "1275-EDIT-FICO-SCORE";
+    "1275-EDIT-FICO-SCORE" -> "1280-EDIT-US-STATE-ZIP-CD";
+    
+    "1280-EDIT-US-STATE-ZIP-CD" -> "2000-DECIDE-ACTION";
+    "2000-DECIDE-ACTION" -> "3000-SEND-MAP";
+    
+    "3000-SEND-MAP" -> "3100-SCREEN-INIT";
+    "3100-SCREEN-INIT" -> "3200-SETUP-SCREEN-VARS";
+    "3200-SETUP-SCREEN-VARS" -> "3201-SHOW-INITIAL-VALUES" [label="if ACUP-DETAILS-NOT-FETCHED"];
+    "3200-SETUP-SCREEN-VARS" -> "3202-SHOW-ORIGINAL-VALUES" [label="if ACUP-SHOW-DETAILS"];
+    "3200-SETUP-SCREEN-VARS" -> "3203-SHOW-UPDATED-VALUES" [label="if ACUP-CHANGES-MADE"];
+    
+    "3201-SHOW-INITIAL-VALUES" -> "3250-SETUP-INFOMSG";
+    "3202-SHOW-ORIGINAL-VALUES" -> "3250-SETUP-INFOMSG";
+    "3203-SHOW-UPDATED-VALUES" -> "3250-SETUP-INFOMSG";
+    
+    "3250-SETUP-INFOMSG" -> "3300-SETUP-SCREEN-ATTRS";
+    "3300-SETUP-SCREEN-ATTRS" -> "3310-PROTECT-ALL-ATTRS";
+    "3310-PROTECT-ALL-ATTRS" -> "3320-UNPROTECT-FEW-ATTRS" [label="if ACUP-SHOW-DETAILS or ACUP-CHANGES-NOT-OK"];
+    "3320-UNPROTECT-FEW-ATTRS" -> "3390-SETUP-INFOMSG-ATTRS";
+    "3310-PROTECT-ALL-ATTRS" -> "3390-SETUP-INFOMSG-ATTRS" [label="if not (ACUP-SHOW-DETAILS or ACUP-CHANGES-NOT-OK)"];
+    
+    "3390-SETUP-INFOMSG-ATTRS" -> "3400-SEND-SCREEN";
+    "3400-SEND-SCREEN" -> "COMMON-RETURN";
+    
+    "2000-DECIDE-ACTION" -> "9000-READ-ACCT" [label="if ACUP-DETAILS-NOT-FETCHED"];
+    "9000-READ-ACCT" -> "9200-GETCARDXREF-BYACCT";
+    "9200-GETCARDXREF-BYACCT" -> "9300-GETACCTDATA-BYACCT" [label="if CARDXREF read successful"];
+    "9300-GETACCTDATA-BYACCT" -> "9400-GETCUSTDATA-BYCUST" [label="if ACCTDATA read successful"];
+    "9400-GETCUSTDATA-BYCUST" -> "9500-STORE-FETCHED-DATA" [label="if CUSTDATA read successful"];
+    "9500-STORE-FETCHED-DATA" -> "3000-SEND-MAP";
+    
+    "2000-DECIDE-ACTION" -> "9600-WRITE-PROCESSING" [label="if ACUP-CHANGES-OK-NOT-CONFIRMED and CCARD-AID-PFK05"];
+    "9600-WRITE-PROCESSING" -> "9700-CHECK-CHANGE-IN-REC";
+    "9700-CHECK-CHANGE-IN-REC" -> "3000-SEND-MAP" [label="if update successful"];
+    
+    "COMMON-RETURN" -> "END" [label="Program end"];
+    
+    "ABEND-ROUTINE" [label="ABEND-ROUTINE\nHandle unexpected abends"];
+    "0000-MAIN" -> "ABEND-ROUTINE" [label="if unexpected abend occurs"];
+    "ABEND-ROUTINE" -> "END" [label="Program termination due to abend"];
+}
+]]>
+</FlowchartRepresentation>
+
+<ProgramStructureAndModules>
+    <OverallStructure>
+<![CDATA[
+The COACTUPC program is structured into four main divisions:
+
+1. IDENTIFICATION DIVISION: Contains program identification information such as the program name (COACTUPC) and date written.
+
+2. ENVIRONMENT DIVISION: Not explicitly present in this program.
+
+3. DATA DIVISION: Includes the WORKING-STORAGE SECTION, which defines various data structures and variables used throughout the program.
+
+4. PROCEDURE DIVISION: Contains the main logic of the program, organized into several paragraphs that handle different aspects of account and customer data processing.
+
+The program is designed to update account and customer information in a credit card system. It interacts with the user through a CICS screen interface and performs various data validation and processing tasks.
+]]>
+    </OverallStructure>
+    <MajorFunctionality>
+<![CDATA[
+The PROCEDURE DIVISION contains the following major paragraphs:
+
+1. 0000-MAIN: This paragraph is the main entry point of the program. It sets up error handling, initializes variables, and controls the overall flow of the program.
+
+2. 1000-PROCESS-INPUTS: This paragraph handles the processing of user inputs from the screen.
+
+3. 1100-RECEIVE-MAP: This paragraph receives the input map from the user interface.
+
+4. 1200-EDIT-MAP-INPUTS: This paragraph validates and edits the user inputs.
+
+5. 2000-DECIDE-ACTION: This paragraph determines the next action based on the current state of the program and user inputs.
+
+6. 3000-SEND-MAP: This paragraph prepares and sends the output map to the user interface.
+
+7. 9000-READ-ACCT: This paragraph reads account information from the database.
+
+8. 9600-WRITE-PROCESSING: This paragraph handles the writing of updated information back to the database.
+
+9. ABEND-ROUTINE: This paragraph handles abnormal termination of the program.
+
+These are all paragraphs as they do not have the word "SECTION" explicitly mentioned in their headers.
+]]>
+    </MajorFunctionality>
+    <ModulesContributeToProgramObjective>
+<![CDATA[
+The modules contribute to the program's objective of updating account and customer information as follows:
+
+1. 0000-MAIN coordinates the overall flow of the program, ensuring that all necessary steps are executed in the correct order.
+
+2. 1000-PROCESS-INPUTS, 1100-RECEIVE-MAP, and 1200-EDIT-MAP-INPUTS work together to gather and validate user inputs, ensuring data integrity.
+
+3. 2000-DECIDE-ACTION determines the appropriate course of action based on the current state and user inputs, allowing for dynamic program flow.
+
+4. 3000-SEND-MAP prepares and sends the updated information back to the user interface, providing feedback and updated data to the user.
+
+5. 9000-READ-ACCT and 9600-WRITE-PROCESSING handle the interaction with the database, allowing for retrieval and storage of account and customer information.
+
+6. ABEND-ROUTINE ensures proper handling of errors, contributing to the program's robustness and reliability.
+
+These modules work together to create a comprehensive system for updating and managing account and customer information in a credit card system.
+]]>
+    </ModulesContributeToProgramObjective>
+    <ModuleDependencies>
+<![CDATA[
+The modules in COACTUPC have several dependencies and interactions:
+
+1. 0000-MAIN calls 1000-PROCESS-INPUTS, 2000-DECIDE-ACTION, and 3000-SEND-MAP, coordinating the main flow of the program.
+
+2. 1000-PROCESS-INPUTS calls 1100-RECEIVE-MAP and 1200-EDIT-MAP-INPUTS, creating a sequence for input processing and validation.
+
+3. 2000-DECIDE-ACTION may call 9000-READ-ACCT to retrieve account information and 9600-WRITE-PROCESSING to update the database, depending on the program state and user inputs.
+
+4. 3000-SEND-MAP depends on the results of 1200-EDIT-MAP-INPUTS and 2000-DECIDE-ACTION to determine what information to display to the user.
+
+5. 9000-READ-ACCT and 9600-WRITE-PROCESSING interact with the database and provide data to other modules like 2000-DECIDE-ACTION and 3000-SEND-MAP.
+
+6. ABEND-ROUTINE can be called from any other module in case of an error, providing a centralized error handling mechanism.
+
+These dependencies ensure a logical flow of data and control throughout the program, from input reception to data processing and output generation.
+]]>
+    </ModuleDependencies>
+</ProgramStructureAndModules>
+
+<ControlFlowAndLogic>
+    <ControlFlowExplanation>
+<![CDATA[
+The program COACTUPC follows a structured control flow:
+
+1. The program starts with initialization in the 0000-MAIN paragraph.
+2. It sets up error handling using EXEC CICS HANDLE ABEND.
+3. The program then initializes various working storage variables and stores the context.
+4. It checks if there's any passed data (EIBCALEN) and processes it accordingly.
+5. The program then performs the YYYY-STORE-PFKEY paragraph to map the AID to PFKey.
+6. It checks if the AID is valid for the current context.
+7. The main decision-making occurs in an EVALUATE TRUE statement, which determines the next action based on user input and program state.
+8. Depending on the evaluation, the program may exit, process inputs, decide on actions, or send a map to the user.
+9. The program ends with a common return routine that sends the final output to the user.
+
+Throughout its execution, the program uses various paragraphs (e.g., 1000-PROCESS-INPUTS, 2000-DECIDE-ACTION, 3000-SEND-MAP) to handle different aspects of processing.
+]]>
+    </ControlFlowExplanation>
+    <ControlStructureDescription>
+<![CDATA[
+The program employs several control structures:
+
+1. PERFORM statements: Used to execute paragraphs, such as YYYY-STORE-PFKEY, 1000-PROCESS-INPUTS, 2000-DECIDE-ACTION, and 3000-SEND-MAP.
+
+2. IF-ELSE statements: Used for conditional execution throughout the program, such as checking EIBCALEN or validating user inputs.
+
+3. EVALUATE TRUE statement: A key control structure used in the main decision-making process to determine program flow based on various conditions.
+
+4. GO TO statements: Used in some cases to transfer control to specific parts of the program, such as COMMON-RETURN.
+
+5. EXEC CICS commands: Used for various CICS operations like handling abends, reading/writing data, and screen interactions.
+]]>
+    </ControlStructureDescription>
+    <ControlStructureConditions>
+<![CDATA[
+1. PERFORM statements: These are generally unconditional and execute the specified paragraph.
+
+2. IF-ELSE statements: Conditions vary, including:
+   - Checking if EIBCALEN is equal to 0
+   - Validating user inputs (e.g., FLG-ACCTFILTER-ISVALID)
+   - Checking program states (e.g., ACUP-DETAILS-NOT-FETCHED)
+
+3. EVALUATE TRUE statement: The main decision point with multiple conditions, including:
+   - CCARD-AID-PFK03: User pressed PF03 to exit
+   - ACUP-DETAILS-NOT-FETCHED AND CDEMO-PGM-ENTER: Fresh entry into the program
+   - ACUP-CHANGES-OKAYED-AND-DONE: Account data changes reviewed and done successfully
+   - ACUP-SHOW-DETAILS: Account details have been presented to the user
+
+4. GO TO statements: Used unconditionally to transfer control to specific routines.
+
+5. EXEC CICS commands: Conditions vary based on the specific command, such as checking response codes after file operations.
+]]>
+    </ControlStructureConditions>
+    <NestedOrComplexControlStructures>
+<![CDATA[
+The program contains several nested and complex control structures:
+
+1. Nested IF statements in the 1200-EDIT-MAP-INPUTS paragraph:
+   - Multiple levels of nesting for validating different input fields
+   - Example: Checking FLG-CRED-LIMIT-ISVALID, then performing further checks inside
+
+2. Nested PERFORM statements in the 3000-SEND-MAP paragraph:
+   - PERFORM 3100-SCREEN-INIT
+   - PERFORM 3200-SETUP-SCREEN-VARS
+   - PERFORM 3250-SETUP-INFOMSG
+   - PERFORM 3300-SETUP-SCREEN-ATTRS
+   - PERFORM 3390-SETUP-INFOMSG-ATTRS
+   - PERFORM 3400-SEND-SCREEN
+
+3. Complex EVALUATE TRUE statement in the main routine:
+   - Multiple WHEN clauses with nested IF-ELSE statements and PERFORM statements
+
+4. Nested IF statements in the 9600-WRITE-PROCESSING paragraph:
+   - Multiple levels of error checking and conditional processing
+
+These complex structures impact the program's logic by allowing for detailed input validation, flexible decision-making based on various conditions, and comprehensive error handling.
+]]>
+    </NestedOrComplexControlStructures>
+</ControlFlowAndLogic>
+
+
+<DecisionPointsAndConditionalLogic>
+    <MajorDecisionPoints>
+<![CDATA[
+The major decision points in the program are:
+
+1. Initial program entry check: Determines if it's a fresh entry or a re-entry.
+
+2. AID key validation: Checks if the pressed key is valid for the current context.
+
+3. Main EVALUATE TRUE statement: Determines the program's next action based on the current state and user input.
+
+4. Input validation: Checks the validity of user inputs in the 1200-EDIT-MAP-INPUTS paragraph.
+
+5. Action decision: Determines what action to take based on the validated inputs in the 2000-DECIDE-ACTION paragraph.
+
+6. File operation results: Checks the results of file read and write operations to determine next steps.
+
+7. Data change detection: Checks if any data has been changed before proceeding with updates.
+]]>
+    </MajorDecisionPoints>
+    <DecisionPointsConditionsRulesExplain>
+<![CDATA[
+1. Initial program entry:
+   - Condition: EIBCALEN is equal to 0 or CDEMO-FROM-PROGRAM = LIT-MENUPGM and NOT CDEMO-PGM-REENTER
+   - Action: Initializes CARDDEMO-COMMAREA and WS-THIS-PROGCOMMAREA
+
+2. AID key validation:
+   - Condition: Checks against valid AID keys (CCARD-AID-ENTER, CCARD-AID-PFK03, etc.)
+   - Action: Sets PFK-VALID or PFK-INVALID
+
+3. Main EVALUATE TRUE:
+   - Conditions: Various program states and user actions (e.g., CCARD-AID-PFK03, ACUP-DETAILS-NOT-FETCHED)
+   - Actions: Determines whether to exit, process inputs, show details, or perform updates
+
+4. Input validation:
+   - Conditions: Various checks on input fields (e.g., FLG-ACCTFILTER-ISVALID, FLG-CRED-LIMIT-ISVALID)
+   - Actions: Sets appropriate flags and error messages
+
+5. Action decision:
+   - Conditions: Program state flags (e.g., ACUP-DETAILS-NOT-FETCHED, ACUP-SHOW-DETAILS)
+   - Actions: Determines whether to fetch details, process changes, or confirm updates
+
+6. File operation results:
+   - Conditions: Checks WS-RESP-CD after file operations
+   - Actions: Determines success or failure of operations and sets appropriate flags
+
+7. Data change detection:
+   - Conditions: Compares old and new data values
+   - Actions: Determines if any changes have occurred and whether to proceed with updates
+]]>
+    </DecisionPointsConditionsRulesExplain>
+    <ComplexOrNestedConditionalLogic>
+<![CDATA[
+The program contains several instances of complex or nested conditional logic:
+
+1. Input validation in 1200-EDIT-MAP-INPUTS:
+   - Nested IF statements for validating various input fields
+   - Example: Checking FLG-CRED-LIMIT-ISVALID, then performing further checks on ACUP-NEW-CREDIT-LIMIT-X
+
+2. Action decision in 2000-DECIDE-ACTION:
+   - Complex EVALUATE TRUE statement with multiple WHEN clauses
+   - Each WHEN clause may contain nested IF-ELSE statements or PERFORM statements
+
+3. File operation error handling:
+   - Nested IF statements in file read/write operations
+   - Example: In 9600-WRITE-PROCESSING, checking for successful locks and updates
+
+4. Data change detection in 9700-CHECK-CHANGE-IN-REC:
+   - Complex IF statement with multiple conditions checking various fields for changes
+
+These complex structures allow the program to handle a wide range of scenarios and input combinations, ensuring thorough validation and appropriate actions based on the program's state and user inputs. They also contribute to comprehensive error handling and data integrity checks throughout the program execution.
+]]>
+    </ComplexOrNestedConditionalLogic>
+</DecisionPointsAndConditionalLogic>
+
+Here's a comprehensive description of the overall flow and logic of the COACTUPC program:
+
+<DataFlowAndManipulation>
+    <DataFlow>
+    <![CDATA[
+    The COACTUPC program is designed to handle account updates in a credit card system. The data flow in this program can be summarized as follows:
+
+    1. The program receives input data from a CICS screen (CACTUPA) containing account and customer information.
+    2. It reads existing account and customer data from files (ACCTDAT and CUSTDAT) using the account ID provided.
+    3. The program processes and validates the input data, comparing it with the existing data.
+    4. If changes are detected and validated, the program updates the account and customer records in their respective files.
+    5. Throughout the process, the program maintains two sets of data: ACUP-OLD-DETAILS and ACUP-NEW-DETAILS, representing the original and updated information respectively.
+    6. The program sends output back to the CICS screen, either displaying the updated information or error messages.
+    ]]>
+    </DataFlow>
+    <DataTransformations>
+    <![CDATA[
+    The program performs several data transformations and manipulations:
+
+    1. Date conversions: The program converts date fields (e.g., open date, expiry date, reissue date) from separate year, month, and day fields to a single YYYY-MM-DD format for storage and processing.
+
+    2. Numeric conversions: The program converts numeric fields (e.g., credit limit, cash credit limit, current balance) from display format to computational format for calculations and comparisons.
+
+    3. Phone number formatting: The program formats phone numbers by combining separate area code, prefix, and line number fields into a single formatted string.
+
+    4. SSN formatting: The program combines three separate SSN fields into a single 9-digit number for storage and processing.
+
+    5. Currency formatting: The program formats currency values (e.g., credit limit, current balance) for display on the screen using a picture clause (PIC +ZZZ,ZZZ,ZZZ.99).
+
+    6. Input validation: The program performs various validations on input data, such as checking for valid dates, numeric values, and required fields.
+
+    7. Comparison of old and new data: The program compares the existing data (ACUP-OLD-DETAILS) with the input data (ACUP-NEW-DETAILS) to detect changes and determine if an update is necessary.
+    ]]>
+    </DataTransformations>
+</DataFlowAndManipulation>
+<ExternalInteractionsAndDependencies>
+    <ExternalSystemsInteraction>
+    <![CDATA[
+    The COACTUPC program interacts with several external systems and components:
+
+    1. CICS (Customer Information Control System): The program is designed to run in a CICS environment, utilizing CICS commands for screen handling, file access, and transaction management.
+
+    2. BMS (Basic Mapping Support): The program uses BMS for screen mapping and interaction with the CACTUPA map.
+
+    3. File systems: The program interacts with VSAM files for reading and updating account and customer data (ACCTDAT, CUSTDAT, and CARDXREF).
+
+    4. External date validation routine: The program calls an external routine named CSUTLDTC for date validation.
+
+    5. Common copybooks: The program uses several copybooks (e.g., COCOM01Y, CSDAT01Y, CSLKPCDY) for shared data structures and constants.
+    ]]>
+    </ExternalSystemsInteraction>
+    <ExternalEntitiesDataExchange>
+    <![CDATA[
+    1. Database Tables
+        Input:
+        N/A
+
+        Output:
+        N/A
+
+    2. Datasets/Files
+        Input:
+        - 1. ACCTDAT: This file contains account master records. The program reads existing account data from this file using the account ID.
+        - 2. CUSTDAT: This file contains customer master records. The program reads existing customer data from this file using the customer ID associated with the account.
+        - 3. CARDXREF: This file contains card cross-reference data. The program reads this file to obtain customer and card information associated with an account.
+
+        Output:
+        - 1. ACCTDAT: The program updates the account master record in this file if changes are made and validated.
+        - 2. CUSTDAT: The program updates the customer master record in this file if changes are made and validated.
+    ]]>
+    </ExternalEntitiesDataExchange>
+    <ExternalInteractionsPotentialImpacts>
+    <![CDATA[
+    The external interactions of the COACTUPC program have several potential impacts and considerations:
+
+    1. Data integrity: Since the program updates critical account and customer information, ensuring data integrity is crucial. The program uses CICS file control commands with proper error handling to maintain data consistency.
+
+    2. Performance: The program performs multiple file reads and updates, which could impact performance, especially under high transaction volumes. Efficient file access and update strategies are important.
+
+    3. Concurrency: The program uses CICS READ UPDATE commands to lock records before updating, preventing concurrent updates to the same record. However, this could lead to contention if multiple users attempt to update the same account simultaneously.
+
+    4. Error handling: The program includes error handling for file access and update operations. Proper error messages are displayed to the user, and in case of update failures, the program performs a SYNCPOINT ROLLBACK to ensure data consistency.
+
+    5. Security: The program handles sensitive customer information (e.g., SSN, account details). Ensuring proper access controls and data encryption in the CICS environment is crucial.
+
+    6. Dependency management: The program relies on external copybooks and routines. Any changes to these dependencies could affect the program's functionality and would require careful version management and testing.
+
+    7. Screen interface: The program's heavy reliance on the CACTUPA screen map means that any changes to the screen layout or fields would require corresponding changes in the program logic.
+    ]]>
+    </ExternalInteractionsPotentialImpacts>
+</ExternalInteractionsAndDependencies>
+
+
+
+</OverallProgramLogicAndFlow>
+
+
+
+<ProgramLogicAndFunctionality>
+
+<ProgramLogic1>
+     <![CDATA[
+     This rule manages the updating of account and customer information in a credit card system. It processes various account-related fields such as account status, current balance, credit limits, and important dates. The rule also handles customer details including personal information, address, and contact details.
+
+     The rule first validates the input data for each field, ensuring that the information provided meets specific criteria. For example, it checks if the account status is valid (either active or inactive), if the credit limits are within acceptable ranges, and if dates are in the correct format.
+
+     After validation, the rule prepares the data for updating in the system. It formats the information appropriately, such as structuring dates in the required format and formatting phone numbers with the correct punctuation.
+
+     The rule then attempts to update both the account and customer records in the system. It first tries to lock these records to prevent concurrent modifications. If successful, it compares the current data in the system with the original data that was retrieved when the update process started. This comparison ensures that no other process has modified the data in the meantime.
+
+     If the data hasn't been changed by another process, the rule proceeds with the update. It writes the new information to both the account and customer records. If any part of this process fails, the rule will roll back all changes to maintain data integrity.
+
+     Throughout this process, the rule manages error handling and provides appropriate feedback, such as indicating if the update was successful or if there were issues during the process.
+     ]]>
+</ProgramLogic1>
+
+<ProgramLogic2>
+     <![CDATA[
+     This rule manages the assignment of customer information in a credit card management system. It processes and stores various details about a customer, including personal information, contact details, and financial data. The rule assigns values to multiple fields that make up a customer's profile, such as their name (split into first, middle, and last), address (including multiple address lines, state, country, and zip code), phone numbers, Social Security Number (), government-issued ID, date of birth,  account ID, primary cardholder status, and  credit score. These assignments are crucial for maintaining accurate and up-to-date customer records in the system. The rule takes input from a user interface and assigns the provided values to the corresponding fields in the customer record structure, preparing the data for subsequent database updates. This ensures that all relevant customer information is captured and stored correctly, supporting various functions of the credit card management system such as account management, customer service, and credit risk assessment.
+     ]]>
+</ProgramLogic2>
+
+
+
+</ProgramLogicAndFunctionality>
+
+
+
+<TheDataFlowAndDataDependencies>
+
+Here is the analysis of data flow and dependencies for the COACTUPC program:
+
+<DataFlow>
+<![CDATA[
+1. Input data flow:
+   - Account and customer data is received from the user via the CACTUPA map
+   - The received data is stored in the CACTUPAI structure
+   - Key input fields include:
+     - ACCTSIDI: Account ID
+     - ACSTTUSI: Account status
+     - ACRDLIMI: Credit limit
+     - ACSHLIMI: Cash credit limit
+     - ACURBALI: Current balance
+     - ACRCYCRI: Current cycle credit
+     - ACRCYDBI: Current cycle debit
+     - ACTSSN1I, ACTSSN2I, ACTSSN3I: Customer SSN
+     - ACSFNAMI: Customer first name
+     - ACSLNAMI: Customer last name
+
+2. Data retrieval flow:
+   - Account data is read from the ACCTDAT file using the account ID (WS-CARD-RID-ACCT-ID)
+   - Customer data is read from the CUSTDAT file using the customer ID (WS-CARD-RID-CUST-ID)
+   - Card cross-reference data is read from the CARDXREFNAME-ACCT-PATH file using the account ID
+
+3. Data processing flow:
+   - Input data is validated and transformed in the 1200-EDIT-MAP-INPUTS paragraph
+   - Validated data is stored in the ACUP-NEW-DETAILS structure
+   - Old (existing) data is stored in the ACUP-OLD-DETAILS structure
+   - The program compares old and new data to detect changes in the 1205-COMPARE-OLD-NEW paragraph
+
+4. Output data flow:
+   - Updated account data is written back to the ACCTDAT file
+   - Updated customer data is written back to the CUSTDAT file
+   - The updated data is displayed on the screen using the CACTUPAO structure
+]]>
+</DataFlow>
+
+<DataDependency>
+<![CDATA[
+1. Account and Customer relationship:
+   - The CARD-XREF-RECORD links the account ID (XREF-ACCT-ID) with the customer ID (XREF-CUST-ID)
+   - This relationship is crucial for retrieving and updating the correct customer data for a given account
+
+2. Data validation dependencies:
+   - The program uses various validation flags (e.g., FLG-ACCT-STATUS-ISVALID, FLG-CRED-LIMIT-ISVALID) to ensure data integrity
+   - These flags depend on the input data and affect the program's flow and update decisions
+
+3. Date field dependencies:
+   - The program validates and processes multiple date fields (e.g., ACUP-NEW-OPEN-DATE, ACUP-NEW-EXPIRAION-DATE, ACUP-NEW-REISSUE-DATE)
+   - These dates are interdependent and must be logically consistent (e.g., open date should be before expiration date)
+
+4. Financial data dependencies:
+   - The program processes financial fields such as credit limit, cash credit limit, current balance, and cycle credits/debits
+   - These fields are interdependent and must maintain logical consistency (e.g., current balance should not exceed credit limit)
+
+5. Update process dependencies:
+   - The program's update process depends on the comparison between old and new data (1205-COMPARE-OLD-NEW paragraph)
+   - Only changed fields are updated in the database, maintaining data integrity and efficiency
+
+6. Error handling dependencies:
+   - The program's error handling (e.g., setting WS-RETURN-MSG) depends on the results of various data validations and database operations
+   - These error messages affect the program's flow and the information displayed to the user
+
+7. Screen display dependencies:
+   - The data displayed on the screen (CACTUPAO structure) depends on the results of database reads, user inputs, and data validations
+   - This affects the user's ability to view and modify account and customer information
+]]>
+</DataDependency>
+
+
+
+</TheDataFlowAndDataDependencies>
+
+
+
+<DatabaseInformation>
+
+Here's the comprehensive documentation for the database interactions within the COBOL program COACTUPC:
+
+<DatabaseOverview>
+<![CDATA[
+N/A
+]]>
+</DatabaseOverview>
+
+<DatabaseConnectivity>
+<![CDATA[
+N/A
+]]>
+</DatabaseConnectivity>
+
+
+
+<DatabaseSchema>
+<![CDATA[
+N/A
+]]>
+</DatabaseSchema>
+
+
+
+Based on the provided COBOL program and instructions, here's the comprehensive documentation for the database interactions:
+
+<SQLQueriesAndCommands>
+<![CDATA[
+N/A
+]]>
+</SQLQueriesAndCommands>
+
+<DataFlow>
+<![CDATA[
+N/A
+]]>
+</DataFlow>
+
+<ErrorHandlingAndTransactionManagement>
+<![CDATA[
+N/A
+]]>
+</ErrorHandlingAndTransactionManagement>
+
+<AdditionalConsiderations>
+<![CDATA[
+While this COBOL program (COACTUPC) does not directly interact with a database using SQL, it does perform file operations on VSAM files. The program reads and updates account and customer data from these files. Here are some relevant details:
+
+1. File Operations:
+   - The program reads and updates data from three VSAM files: ACCTDAT (account data), CUSTDAT (customer data), and CARDDAT (card data).
+   - File access is performed using CICS commands such as EXEC CICS READ and EXEC CICS REWRITE.
+
+2. Data Retrieval:
+   - Account data is retrieved using the account ID as the key (WS-CARD-RID-ACCT-ID-X).
+   - Customer data is retrieved using the customer ID as the key (WS-CARD-RID-CUST-ID-X).
+   - Card data is retrieved using the card number as the key (WS-CARD-RID-CARDNUM).
+
+3. Data Updates:
+   - The program updates both account and customer records after validating user input.
+   - Updates are performed using EXEC CICS REWRITE commands.
+
+4. Error Handling:
+   - The program checks for various error conditions, such as record not found, during file operations.
+   - Error messages are stored in WS-RETURN-MSG and displayed to the user.
+
+5. Transaction Management:
+   - The program uses EXEC CICS SYNCPOINT for committing changes.
+   - In case of update failures, it performs a rollback using EXEC CICS SYNCPOINT ROLLBACK.
+
+6. Locking Mechanism:
+   - The program attempts to lock records before updating them to prevent concurrent modifications.
+   - If a lock cannot be obtained, it sets an appropriate error message.
+
+7. Data Validation:
+   - Extensive data validation is performed on user inputs before updating the records.
+   - This includes checks for data types, value ranges, and business rules.
+
+While not using a traditional database, this program demonstrates best practices for data handling, error management, and transaction control in a CICS COBOL environment using VSAM files.
+]]>
+</AdditionalConsiderations>
+
+
+
+
+
+</DatabaseInformation>
+
+
+
+<ErrorAndAbendHandling>
+
+Here's the detailed documentation of the error handling and recovery mechanisms implemented in the COBOL program COACTUPC:
+
+<OverallStrategy>
+<![CDATA[
+The program COACTUPC employs a comprehensive error handling strategy that primarily relies on CICS (Customer Information Control System) error handling mechanisms. It uses EXEC CICS HANDLE ABEND to set up a global error handler for unexpected abends. The program also utilizes specific error checks throughout its execution, particularly during file operations and data validation processes. Error messages are stored in working storage variables and displayed to the user through the BMS (Basic Mapping Support) map.
+]]>
+</OverallStrategy>
+
+<CommonErrorConditions>
+<ListErrors>
+<![CDATA[
+1. CICS command execution errors (e.g., file read, write operations)
+2. Data validation errors (e.g., invalid input data)
+3. File access errors (e.g., record not found, duplicate record)
+4. Unexpected abends
+5. Business logic errors (e.g., data inconsistencies)
+]]>
+</ListErrors>
+<ErrorSources>
+<![CDATA[
+1. CICS command execution errors: Arise from EXEC CICS commands, indicated by non-zero RESP and RESP2 codes
+2. Data validation errors: Originate from user input not meeting specified criteria
+3. File access errors: Occur during READ, WRITE, or REWRITE operations on VSAM files
+4. Unexpected abends: Can be caused by various unforeseen circumstances in the program execution
+5. Business logic errors: Result from data not meeting business rules or unexpected data states
+]]>
+</ErrorSources>
+</CommonErrorConditions>
+
+<ErrorDetectionMechanisms>
+<DetectMethods>
+<![CDATA[
+1. CICS command errors are detected by checking RESP and RESP2 codes after EXEC CICS commands
+2. Data validation errors are identified through specific validation routines (e.g., 1200-EDIT-MAP-INPUTS)
+3. File access errors are detected by examining RESP codes after file operations
+4. Unexpected abends are caught by the global EXEC CICS HANDLE ABEND
+5. Business logic errors are identified through specific condition checks in the program logic
+]]>
+</DetectMethods>
+<FunctionsAndExceptionCheck>
+<![CDATA[
+1. EXEC CICS HANDLE ABEND LABEL(ABEND-ROUTINE) is used to set up a global abend handler
+2. EVALUATE statements are used to check RESP codes after CICS commands
+3. Custom validation routines (e.g., 1210-EDIT-ACCOUNT, 1220-EDIT-YESNO) are used to check input data
+4. Conditional statements (IF-THEN-ELSE) are used throughout the program to check for error conditions
+5. The program uses 88-level condition names (e.g., INPUT-ERROR, FLG-ACCTFILTER-NOT-OK) to represent various error states
+]]>
+</FunctionsAndExceptionCheck>
+</ErrorDetectionMechanisms>
+
+<ErrorResponsesAndRecoveryActions>
+<ImmediateResponse>
+<![CDATA[
+1. For CICS command errors, the program sets appropriate error flags and messages (e.g., setting INPUT-ERROR to TRUE)
+2. For data validation errors, the program sets specific error flags (e.g., FLG-ACCT-STATUS-NOT-OK) and prepares error messages
+3. For file access errors, the program sets error flags and prepares specific error messages (e.g., DID-NOT-FIND-ACCT-IN-ACCTDAT)
+4. For unexpected abends, control is transferred to the ABEND-ROUTINE paragraph
+5. For business logic errors, the program sets appropriate flags and prepares error messages
+]]>
+</ImmediateResponse>
+<RecoveryProcedures>
+<![CDATA[
+1. After detecting errors, the program typically continues execution to the next appropriate section, often returning to the main menu or redisplaying the current screen with error messages
+2. In case of file update failures, the program performs a SYNCPOINT ROLLBACK to ensure data integrity
+3. For unexpected abends, the ABEND-ROUTINE sends an error message to the user and terminates the program with a custom abend code
+4. The program uses the 2000-DECIDE-ACTION paragraph to determine the next course of action based on the current error state
+5. There are no explicit retry mechanisms implemented in the program
+]]>
+</RecoveryProcedures>
+</ErrorResponsesAndRecoveryActions>
+
+<ErrorLoggingMechanisms>
+<MechanismsDetails>
+<![CDATA[
+The program does not implement a dedicated error logging mechanism. Instead, it relies on CICS's built-in error logging capabilities. Error information is primarily stored in working storage variables for immediate use in user communication.
+]]>
+</MechanismsDetails>
+<ErrorLogsFormatAndContent>
+<![CDATA[
+As there is no explicit error logging implemented in the program, this section is not applicable. Error information is primarily stored in working storage variables such as WS-RETURN-MSG and CCARD-ERROR-MSG for immediate display to the user.
+]]>
+</ErrorLogsFormatAndContent>
+</ErrorLoggingMechanisms>
+
+<UserNotificationsAndInterfaceHandling>
+<ErrorsCommunication>
+<![CDATA[
+1. Error messages are stored in the WS-RETURN-MSG and CCARD-ERROR-MSG variables
+2. These messages are then mapped to the ERRMSGO field in the BMS map (CACTUPAO)
+3. Informational messages are stored in the WS-INFO-MSG variable and mapped to the INFOMSGO field
+4. The program uses the 3250-SETUP-INFOMSG paragraph to prepare appropriate messages based on the current program state
+5. Error and informational messages are displayed to the user when the screen is sent using the 3400-SEND-SCREEN paragraph
+]]>
+</ErrorsCommunication>
+<ErrorMessagesInterface>
+<![CDATA[
+1. Error messages are displayed in the ERRMSGO field of the CACTUPA map
+2. Informational messages are displayed in the INFOMSGO field of the CACTUPA map
+3. The program uses different colors to highlight error conditions (e.g., DFHRED for error fields)
+4. Input fields with errors are typically highlighted using HILIGHT=UNDERLINE
+5. The cursor is positioned to the first error field using the CURSOR attribute in the EXEC CICS SEND MAP command
+6. Function key explanations (e.g., ENTER=Process, F3=Exit) are displayed at the bottom of the screen to guide user actions
+]]>
+</ErrorMessagesInterface>
+</UserNotificationsAndInterfaceHandling>
+
+
+
+</ErrorAndAbendHandling>
+
+
+
+<TheInputAndOutputProcessing>
+
+Here's the detailed explanation of the program COACTUPC based on the provided instructions:
+
+<InputRequirements>
+    <InputDataTypeAndSignificance>
+        <![CDATA[
+        The main input for this program is account and customer data. The program receives input from a CICS map (CACTUPAI) which contains fields for account details and customer information. This input is significant as it allows users to update account and customer information in the system.
+        ]]>
+    </InputDataTypeAndSignificance>
+    <InputSource>
+        <![CDATA[
+        The input source is primarily user input through a CICS screen (CACTUPAI). Some data is also retrieved from database files, including ACCTDAT (account data), CUSTDAT (customer data), and CARDDAT (card data).
+        ]]>
+    </InputSource>
+    <InputFormatAndStructure>
+        <FieldLengths>
+            <![CDATA[
+            - Account ID: 11 characters
+            - Active Status: 1 character
+            - Credit Limit: 15 characters
+            - Cash Credit Limit: 15 characters
+            - Current Balance: 15 characters
+            - Current Cycle Credit: 15 characters
+            - Current Cycle Debit: 15 characters
+            - Open Date: 8 characters (YYYY-MM-DD)
+            - Expiry Date: 8 characters (YYYY-MM-DD)
+            - Reissue Date: 8 characters (YYYY-MM-DD)
+            - Customer ID: 9 characters
+            - SSN: 9 characters (3-2-4 format)
+            - Date of Birth: 8 characters (YYYY-MM-DD)
+            - FICO Score: 3 characters
+            - Name fields (First, Middle, Last): 25 characters each
+            - Address fields: varying lengths (up to 50 characters)
+            - Phone numbers: 15 characters each
+            ]]>
+        </FieldLengths>
+        <MandatoryFields>
+            <![CDATA[
+            - Account ID
+            - Active Status
+            - Credit Limit
+            - Cash Credit Limit
+            - Open Date
+            - Expiry Date
+            - Customer ID
+            - SSN
+            - Date of Birth
+            - First Name
+            - Last Name
+            - Address Line 1
+            - City
+            - State
+            - ZIP Code
+            - Country
+            - Phone Number 1
+            ]]>
+        </MandatoryFields>
+        <DataTypes>
+            <![CDATA[
+            - Account ID: Numeric
+            - Active Status: Alphanumeric (Y/N)
+            - Credit Limit: Numeric (with decimal)
+            - Cash Credit Limit: Numeric (with decimal)
+            - Current Balance: Numeric (with decimal)
+            - Current Cycle Credit: Numeric (with decimal)
+            - Current Cycle Debit: Numeric (with decimal)
+            - Dates (Open, Expiry, Reissue, DOB): Numeric (YYYY-MM-DD format)
+            - Customer ID: Numeric
+            - SSN: Numeric
+            - FICO Score: Numeric
+            - Name fields: Alphanumeric
+            - Address fields: Alphanumeric
+            - Phone numbers: Numeric
+            - EFT Account ID: Alphanumeric
+            - Primary Card Holder: Alphanumeric (Y/N)
+            ]]>
+        </DataTypes>
+        <AdditionalRequirements>
+            <![CDATA[
+            - State must be a valid 2-letter US state code
+            - Country must be a valid 3-letter country code
+            - ZIP code must be 5 digits
+            - Phone numbers must be in the format (999)999-9999
+            - SSN must be in the format 999-99-9999
+            - FICO score must be between 300 and 850
+            ]]>
+        </AdditionalRequirements>
+    </InputFormatAndStructure>
+    
+</InputRequirements>
+<OutputSpecifications>
+    <OutputPurposeAndDownstreamUsage>
+        <![CDATA[
+        The main purpose of the output is to update the account and customer information in the database. The program generates updated records for the ACCTDAT (account data) and CUSTDAT (customer data) files. These updates ensure that the system maintains accurate and up-to-date information about accounts and customers, which can be used by other programs in the system for various purposes such as billing, reporting, and customer service.
+        ]]>
+    </OutputPurposeAndDownstreamUsage>
+    <OutputDestination>
+        <![CDATA[
+        The primary output destinations are:
+        1. ACCTDAT file: Updated account information
+        2. CUSTDAT file: Updated customer information
+        3. CICS screen (CACTUPAO): Display of updated information and status messages to the user
+        ]]>
+    </OutputDestination>
+    <OutputFormatAndStructure>
+        <FormattingRules>
+            <![CDATA[
+            - Dates are formatted as YYYY-MM-DD
+            - Currency values (e.g., credit limits, balances) are formatted with two decimal places
+            - Phone numbers are formatted as (999)999-9999
+            - SSN is formatted as 999-99-9999
+            - Status messages are displayed in specific color codes (e.g., error messages in red)
+            ]]>
+        </FormattingRules>
+        <Structure>
+            <![CDATA[
+            1. ACCTDAT file record:
+               - Account ID (11 characters)
+               - Active Status (1 character)
+               - Current Balance (12 characters, signed numeric)
+               - Credit Limit (12 characters, signed numeric)
+               - Cash Credit Limit (12 characters, signed numeric)
+               - Open Date (10 characters)
+               - Expiration Date (10 characters)
+               - Reissue Date (10 characters)
+               - Current Cycle Credit (12 characters, signed numeric)
+               - Current Cycle Debit (12 characters, signed numeric)
+               - Group ID (10 characters)
+
+            2. CUSTDAT file record:
+               - Customer ID (9 characters)
+               - First Name (25 characters)
+               - Middle Name (25 characters)
+               - Last Name (25 characters)
+               - Address fields (varying lengths)
+               - Phone numbers (15 characters each)
+               - SSN (9 characters)
+               - Date of Birth (10 characters)
+               - EFT Account ID (10 characters)
+               - Primary Card Holder Indicator (1 character)
+               - FICO Credit Score (3 characters)
+
+            3. CICS screen output (CACTUPAO):
+               - Updated field values displayed in their respective positions on the screen
+               - Status messages displayed in the designated message area
+               - Function key information updated based on the current state of the transaction
+            ]]>
+        </Structure>
+    </OutputFormatAndStructure>
+</OutputSpecifications>
+<ErrorHandling>
+    <InputDataErrorsHandling>
+        <![CDATA[
+        The program handles input data errors through extensive validation checks:
+        1. For mandatory fields, if left blank, an error message is generated and displayed to the user.
+        2. For numeric fields, if non-numeric data is entered, an error is flagged and reported.
+        3. Date fields are checked for valid format and reasonable values (e.g., birth date cannot be in the future).
+        4. Format-specific fields like SSN and phone numbers are checked for correct formatting.
+        5. The program sets specific error flags (e.g., FLG-ACCT-STATUS-NOT-OK) for each type of error.
+        6. Error messages are stored in WS-RETURN-MSG and displayed on the screen to guide the user.
+        7. The cursor is positioned to the first field with an error to assist the user in correction.
+        8. The program prevents further processing (like database updates) if any errors are detected.
+        ]]>
+    </InputDataErrorsHandling>
+    <OutputErrorsHandling>
+        <![CDATA[
+        The program handles output generation errors in the following ways:
+        1. Before updating the database, the program checks if it can lock the account and customer records. If locking fails, an error message is displayed (e.g., "Could not lock account record for update").
+        2. If the database update fails, the program rolls back the transaction using EXEC CICS SYNCPOINT ROLLBACK.
+        3. Error messages for failed updates are stored in WS-RETURN-MSG and displayed to the user.
+        4. The program distinguishes between different types of update failures (e.g., lock failure, update failure) and provides specific messages for each.
+        5. In case of a successful update, a confirmation message is displayed to the user.
+        6. If an unexpected error occurs, the program has an ABEND-ROUTINE that captures the error details and displays them to the user.
+        7. The program uses different color codes (e.g., red for errors) to highlight status messages on the output screen.
+        ]]>
+    </OutputErrorsHandling>
+</ErrorHandling>
+
+
+
+
+
+</TheInputAndOutputProcessing>
+
+
+
+<IntegrationInformation>
+
+<IntegrationOverview>
+<![CDATA[
+The program COACTUPC integrates with CICS (Customer Information Control System) for transaction processing and screen handling. It uses CICS commands for various operations such as handling abends, reading and writing to files, and managing screen interactions.
+]]>
+<PurposeOfIntegration>
+<![CDATA[
+The purpose of integrating with CICS is to:
+1. Handle user interactions through screen displays and input processing.
+2. Manage transaction processing for account and customer data updates.
+3. Provide error handling and abend management capabilities.
+4. Enable file access and updates for account and customer records.
+]]>
+</PurposeOfIntegration>
+<IntegrationInteractions>
+<![CDATA[
+The program interacts with CICS in the following ways:
+1. Uses EXEC CICS commands for various operations throughout the program.
+2. Handles abends using EXEC CICS HANDLE ABEND.
+3. Reads and writes to files using EXEC CICS READ and EXEC CICS REWRITE commands.
+4. Manages screen interactions using EXEC CICS RECEIVE MAP and EXEC CICS SEND MAP commands.
+5. Controls program flow with EXEC CICS RETURN and EXEC CICS XCTL commands.
+]]>
+</IntegrationInteractions>
+</IntegrationOverview>
+
+<IntegrationType>
+<![CDATA[
+The integration type used in this program is CICS (Customer Information Control System). CICS is a transaction processing system that manages communication between the program and the user interface, as well as file access and transaction management.
+]]>
+</IntegrationType>
+
+<InteractedExternalSystems>
+<![CDATA[
+The program COACTUPC interacts with CICS as its primary external system for transaction processing and screen handling.
+]]>
+</InteractedExternalSystems>
+
+<ExternalSystemIntegration>
+<SystemType>
+<![CDATA[
+CICS is a transaction server that runs on mainframe systems, primarily on IBM z/OS.
+]]>
+</SystemType>
+<TechStack>
+<![CDATA[
+CICS typically runs on IBM mainframe systems and supports various programming languages, including COBOL. It provides services for transaction processing, screen handling, and data management.
+]]>
+</TechStack>
+<IntegrationRoleOfExternalSystem>
+<![CDATA[
+CICS plays a crucial role in this integration by:
+1. Managing the user interface and screen interactions.
+2. Handling transaction processing for account and customer data updates.
+3. Providing file access and management capabilities.
+4. Offering error handling and abend management services.
+5. Facilitating program control and flow management.
+]]>
+</IntegrationRoleOfExternalSystem>
+</ExternalSystemIntegration>
+
+<ExternalSystemDataFlow>
+<![CDATA[
+The data flow between COACTUPC and CICS includes:
+1. User input: CICS receives user input from the screen and passes it to the program through the EXEC CICS RECEIVE MAP command.
+2. Screen output: The program sends data to be displayed on the screen using EXEC CICS SEND MAP commands.
+3. File access: The program reads and writes account and customer data using EXEC CICS READ and EXEC CICS REWRITE commands, with CICS managing the actual file operations.
+4. Program control: CICS manages program flow through EXEC CICS RETURN and EXEC CICS XCTL commands.
+5. Error handling: CICS provides abend handling capabilities through the EXEC CICS HANDLE ABEND command.
+]]>
+</ExternalSystemDataFlow>
+
+<ExternalSystemInterface>
+<![CDATA[
+The interface between COACTUPC and CICS consists of EXEC CICS commands, which are used to interact with various CICS services. Key interface specifications include:
+
+1. Screen handling:
+   - EXEC CICS RECEIVE MAP: Receives user input from the screen.
+   - EXEC CICS SEND MAP: Sends data to be displayed on the screen.
+
+2. File access:
+   - EXEC CICS READ: Reads data from files (e.g., ACCTDAT, CUSTDAT).
+   - EXEC CICS REWRITE: Updates data in files.
+
+3. Program control:
+   - EXEC CICS RETURN: Returns control to CICS.
+   - EXEC CICS XCTL: Transfers control to another program.
+
+4. Error handling:
+   - EXEC CICS HANDLE ABEND: Sets up abend handling routines.
+
+5. Transaction management:
+   - EXEC CICS SYNCPOINT: Commits or rolls back database changes.
+
+The program uses BMS (Basic Mapping Support) maps for screen layouts, defined in the COACTUP copybook.
+]]>
+</ExternalSystemInterface>
+
+<ExternalSystemErrorsHandling>
+<![CDATA[
+Error handling during integration processes with CICS in COACTUPC includes:
+
+1. Abend handling: The program uses EXEC CICS HANDLE ABEND to set up an abend routine (ABEND-ROUTINE) that handles unexpected errors.
+
+2. File access error detection: The program checks the response codes (WS-RESP-CD and WS-REAS-CD) after file operations to detect and handle errors.
+
+3. Error logging: When errors occur, the program constructs error messages (e.g., WS-FILE-ERROR-MESSAGE) that can be displayed to the user or logged for troubleshooting.
+
+4. Recovery mechanisms: 
+   - For file update errors, the program uses EXEC CICS SYNCPOINT ROLLBACK to undo changes if an error occurs during the update process.
+   - The program provides options to retry operations or return to previous screens in case of errors.
+
+5. User feedback: Error messages are displayed on the screen to inform the user about issues encountered during processing.
+
+6. Conditional logic: The program uses extensive conditional logic to check for various error conditions and handle them appropriately throughout the processing flow.
+]]>
+</ExternalSystemErrorsHandling>
+
+
+
+</IntegrationInformation>
+
+
+
+<ScreenDocumentation>
+
+<Screen1>
+
+<ScreenRepresentation>
+
+<ScreenHtmlRepresentation>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Account Update Screen&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            background-color: #000000;
+            color: #00FF00;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .screen {
+            width: 800px;
+            height: 480px;
+            position: relative;
+        }
+        .field {
+            position: absolute;
+            white-space: nowrap;
+        }
+        .blue { color: #0000FF; }
+        .yellow { color: #FFFF00; }
+        .turquoise { color: #40E0D0; }
+        .red { color: #FF0000; }
+        .neutral { color: #E0E0E0; }
+        .underline { text-decoration: underline; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="screen"&gt;
+        &lt;div class="field blue" style="top: 0px; left: 0px;"&gt;Tran:&lt;/div&gt;
+        &lt;div class="field blue" style="top: 0px; left: 60px;"&gt;ACUP&lt;/div&gt;
+        &lt;div class="field yellow" style="top: 0px; left: 200px;"&gt;AWS Mainframe Modernization&lt;/div&gt;
+        &lt;div class="field blue" style="top: 0px; left: 640px;"&gt;Date:&lt;/div&gt;
+        &lt;div class="field blue" style="top: 0px; left: 700px;"&gt;07/20/23&lt;/div&gt;
+        &lt;div class="field blue" style="top: 20px; left: 0px;"&gt;Prog:&lt;/div&gt;
+        &lt;div class="field blue" style="top: 20px; left: 60px;"&gt;COACTUP&lt;/div&gt;
+        &lt;div class="field yellow" style="top: 20px; left: 200px;"&gt;CardDemo&lt;/div&gt;
+        &lt;div class="field blue" style="top: 20px; left: 640px;"&gt;Time:&lt;/div&gt;
+        &lt;div class="field blue" style="top: 20px; left: 700px;"&gt;14:30:45&lt;/div&gt;
+        &lt;div class="field neutral" style="top: 60px; left: 320px;"&gt;Update Account&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 80px; left: 180px;"&gt;Account Number :&lt;/div&gt;
+        &lt;div class="field underline" style="top: 80px; left: 370px;"&gt;12345678901&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 80px; left: 560px;"&gt;Active Y/N:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 80px; left: 690px;"&gt;Y&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 100px; left: 70px;"&gt;Opened :&lt;/div&gt;
+        &lt;div class="field underline" style="top: 100px; left: 160px;"&gt;2023&lt;/div&gt;
+        &lt;div class="field" style="top: 100px; left: 210px;"&gt;-&lt;/div&gt;
+        &lt;div class="field underline" style="top: 100px; left: 230px;"&gt;07&lt;/div&gt;
+        &lt;div class="field" style="top: 100px; left: 260px;"&gt;-&lt;/div&gt;
+        &lt;div class="field underline" style="top: 100px; left: 280px;"&gt;01&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 100px; left: 380px;"&gt;Credit Limit        :&lt;/div&gt;
+        &lt;div class="field underline" style="top: 100px; left: 600px;"&gt;10000.00&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 120px; left: 70px;"&gt;Expiry :&lt;/div&gt;
+        &lt;div class="field underline" style="top: 120px; left: 160px;"&gt;2028&lt;/div&gt;
+        &lt;div class="field" style="top: 120px; left: 210px;"&gt;-&lt;/div&gt;
+        &lt;div class="field underline" style="top: 120px; left: 230px;"&gt;06&lt;/div&gt;
+        &lt;div class="field" style="top: 120px; left: 260px;"&gt;-&lt;/div&gt;
+        &lt;div class="field underline" style="top: 120px; left: 280px;"&gt;30&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 120px; left: 380px;"&gt;Cash credit Limit   :&lt;/div&gt;
+        &lt;div class="field underline" style="top: 120px; left: 600px;"&gt;2000.00&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 140px; left: 70px;"&gt;Reissue:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 140px; left: 160px;"&gt;2028&lt;/div&gt;
+        &lt;div class="field" style="top: 140px; left: 210px;"&gt;-&lt;/div&gt;
+        &lt;div class="field underline" style="top: 140px; left: 230px;"&gt;05&lt;/div&gt;
+        &lt;div class="field" style="top: 140px; left: 260px;"&gt;-&lt;/div&gt;
+        &lt;div class="field underline" style="top: 140px; left: 280px;"&gt;31&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 140px; left: 380px;"&gt;Current Balance     :&lt;/div&gt;
+        &lt;div class="field underline" style="top: 140px; left: 600px;"&gt;2500.75&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 160px; left: 380px;"&gt;Current Cycle Credit:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 160px; left: 600px;"&gt;500.00&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 180px; left: 70px;"&gt;Account Group:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 180px; left: 220px;"&gt;GOLD&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 180px; left: 380px;"&gt;Current Cycle Debit :&lt;/div&gt;
+        &lt;div class="field underline" style="top: 180px; left: 600px;"&gt;750.25&lt;/div&gt;
+        &lt;div class="field neutral" style="top: 200px; left: 310px;"&gt;Customer Details&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 220px; left: 70px;"&gt;Customer id  :&lt;/div&gt;
+        &lt;div class="field underline" style="top: 220px; left: 220px;"&gt;123456789&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 220px; left: 480px;"&gt;SSN:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 220px; left: 540px;"&gt;123&lt;/div&gt;
+        &lt;div class="field" style="top: 220px; left: 580px;"&gt;-&lt;/div&gt;
+        &lt;div class="field underline" style="top: 220px; left: 600px;"&gt;45&lt;/div&gt;
+        &lt;div class="field" style="top: 220px; left: 630px;"&gt;-&lt;/div&gt;
+        &lt;div class="field underline" style="top: 220px; left: 650px;"&gt;6789&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 240px; left: 70px;"&gt;Date of birth:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 240px; left: 220px;"&gt;1985&lt;/div&gt;
+        &lt;div class="field" style="top: 240px; left: 270px;"&gt;-&lt;/div&gt;
+        &lt;div class="field underline" style="top: 240px; left: 290px;"&gt;03&lt;/div&gt;
+        &lt;div class="field" style="top: 240px; left: 320px;"&gt;-&lt;/div&gt;
+        &lt;div class="field underline" style="top: 240px; left: 340px;"&gt;15&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 240px; left: 480px;"&gt;FICO Score:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 240px; left: 610px;"&gt;750&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 260px; left: 0px;"&gt;First Name&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 260px; left: 270px;"&gt;Middle Name:&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 260px; left: 540px;"&gt;Last Name :&lt;/div&gt;
+        &lt;div class="field underline" style="top: 280px; left: 0px;"&gt;John&lt;/div&gt;
+        &lt;div class="field underline" style="top: 280px; left: 270px;"&gt;Michael&lt;/div&gt;
+        &lt;div class="field underline" style="top: 280px; left: 540px;"&gt;Doe&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 300px; left: 0px;"&gt;Address:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 300px; left: 90px;"&gt;123 Main St&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 300px; left: 620px;"&gt;State&lt;/div&gt;
+        &lt;div class="field underline" style="top: 300px; left: 720px;"&gt;NY&lt;/div&gt;
+        &lt;div class="field underline" style="top: 320px; left: 90px;"&gt;Apt 4B&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 320px; left: 620px;"&gt;Zip&lt;/div&gt;
+        &lt;div class="field underline" style="top: 320px; left: 720px;"&gt;10001&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 340px; left: 0px;"&gt;City&lt;/div&gt;
+        &lt;div class="field underline" style="top: 340px; left: 90px;"&gt;New York&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 340px; left: 620px;"&gt;Country&lt;/div&gt;
+        &lt;div class="field underline" style="top: 340px; left: 720px;"&gt;USA&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 360px; left: 0px;"&gt;Phone 1:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 360px; left: 90px;"&gt;212&lt;/div&gt;
+        &lt;div class="field underline" style="top: 360px; left: 130px;"&gt;555&lt;/div&gt;
+        &lt;div class="field underline" style="top: 360px; left: 170px;"&gt;1234&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 360px; left: 230px;"&gt;Government Issued Id Ref    :&lt;/div&gt;
+        &lt;div class="field underline" style="top: 360px; left: 570px;"&gt;DL123456789&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 380px; left: 0px;"&gt;Phone 2:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 380px; left: 90px;"&gt;917&lt;/div&gt;
+        &lt;div class="field underline" style="top: 380px; left: 130px;"&gt;555&lt;/div&gt;
+        &lt;div class="field underline" style="top: 380px; left: 170px;"&gt;5678&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 380px; left: 230px;"&gt;EFT Account Id:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 380px; left: 400px;"&gt;EFT1234567&lt;/div&gt;
+        &lt;div class="field turquoise" style="top: 380px; left: 520px;"&gt;Primary Card Holder Y/N:&lt;/div&gt;
+        &lt;div class="field underline" style="top: 380px; left: 770px;"&gt;Y&lt;/div&gt;
+        &lt;div class="field neutral" style="top: 420px; left: 220px;"&gt;&lt;/div&gt;
+        &lt;div class="field red" style="top: 440px; left: 0px;"&gt;&lt;/div&gt;
+        &lt;div class="field yellow" style="top: 460px; left: 0px;"&gt;ENTER=Process F3=Exit&lt;/div&gt;
+        &lt;div class="field yellow" style="top: 460px; left: 220px;"&gt;F5=Save&lt;/div&gt;
+        &lt;div class="field yellow" style="top: 460px; left: 300px;"&gt;F12=Cancel&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</ScreenHtmlRepresentation>
+<ScreenWidth>800</ScreenWidth>
+<ScreenHeight>480</ScreenHeight>
+
+</ScreenRepresentation>
+
+Here is the analysis based on the provided instructions:
+
+<BusinessFunction>
+<![CDATA[
+This BMS (Basic Mapping Support) map defines the screen layout for an Account Update function in a credit card system. It allows users to view and modify account details, including customer information, account status, credit limits, and financial data. The map contributes to user interactions by providing a structured interface for data entry and display, enabling users to update account information efficiently.
+]]>
+</BusinessFunction>
+
+<ScreenIdentifiers>
+<![CDATA[
+Map Name: CACTUPA
+Map Set Name: COACTUP
+]]>
+</ScreenIdentifiers>
+
+<PFKeysAndActions>
+<![CDATA[
+1. ENTER: Process the entered data
+2. F3: Exit the screen
+3. F5: Save the changes (appears dimmed, indicating it may be conditionally enabled)
+4. F12: Cancel the operation (appears dimmed, indicating it may be conditionally enabled)
+]]>
+</PFKeysAndActions>
+
+
+
+</Screen1>
+
+
+
+</ScreenDocumentation>
+
+
+
+<ProgramsCalled>
+
+<ApplicationPrograms>1. COMEN01C - The main purpose of COMEN01C is to provide a main menu interface for regular users in the CardDemo application. It displays a list of menu options, processes user input, and navigates to the selected option or performs specific actions based on the user's choice.
+</ApplicationPrograms>
+<SystemPrograms>
+DFHAID, DFHBMSCA
+</SystemPrograms>
+<MissingPrograms>
+N/A
+</MissingPrograms>
+
+</ProgramsCalled>
+
+</Documentation>

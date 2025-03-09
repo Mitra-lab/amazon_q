@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the CORPT00C program:
+
+<ProgramName>
+<![CDATA[
+CORPT00C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of CORPT00C is to generate and submit transaction reports for printing by submitting a batch job from an online CICS environment using an extra partition Transient Data Queue (TDQ).
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card transaction reporting system. It is part of the CardDemo application, which likely handles various aspects of credit card management and reporting. CORPT00C specifically deals with the generation of transaction reports, allowing users to request different types of reports based on specified date ranges.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Report Type Selection: The program allows users to choose between monthly, yearly, or custom date range reports. This is implemented using the MONTHLY, YEARLY, and CUSTOM fields in the CORPT0AI input map.
+
+2. Date Range Input: For custom reports, users can input start and end dates using the SDTMM, SDTDD, SDTYYYY, EDTMM, EDTDD, and EDTYYYY fields in the CORPT0AI input map.
+
+3. Job Submission: The program generates and submits a JCL job to the internal reader using the JOBS Transient Data Queue (TDQ). This is done in the SUBMIT-JOB-TO-INTRDR paragraph.
+
+4. Input Validation: The program performs extensive validation on user inputs, especially for custom date ranges, to ensure the validity of the dates entered.
+
+5. Dynamic JCL Generation: The program dynamically constructs the JCL for the report job based on the user's selections, using the JOB-DATA structure in the working storage section.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+N/A
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. User input via BMS map: The program receives user input through the CORPT0AI BMS map, which includes report type selection and date range for custom reports.
+2. DFHCOMMAREA: The program receives data from the previous program through the DFHCOMMAREA, which is used to maintain context between CICS transactions.
+
+Miscellaneous Output:
+1. JCL Job Submission: The program generates and submits a JCL job to the internal reader using the JOBS Transient Data Queue (TDQ). This job will produce the actual transaction report based on the user's selections.
+2. BMS map output: The program sends output to the user through the CORPT0AO BMS map, which includes messages, error notifications, and confirmation prompts.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not directly interact with any external systems. It operates within the CICS environment and submits a batch job for report generation, but these are considered internal to the overall system rather than external integrations.
+]]>
+</Integration>
+
+<AcronymDefinition>
+CICS: Customer Information Control System
+JCL: Job Control Language
+TDQ: Transient Data Queue
+BMS: Basic Mapping Support
+</AcronymDefinition>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+
+
+<AcronymDefinition>
+<![CDATA[
+
+CICS: Customer Information Control System
+JCL: Job Control Language
+TDQ: Transient Data Queue
+BMS: Basic Mapping Support
+
+]]>
+</AcronymDefinition>
+
+</Documentation>

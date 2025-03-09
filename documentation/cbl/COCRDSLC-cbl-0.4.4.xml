@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the COCRDSLC program:
+
+<ProgramName>
+<![CDATA[
+COCRDSLC
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COCRDSLC is to accept and process credit card detail requests. It allows users to view credit card details by entering an account number and card number.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card management system. It is part of the business process that handles customer inquiries and provides access to credit card information for authorized users.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. User Input Handling: The program accepts account number (ACCTSIDI) and card number (CARDSIDI) as input from the user.
+
+2. Data Validation: It performs validation checks on the input data, ensuring that the account number and card number are in the correct format and are valid.
+
+3. Card Information Retrieval: The program reads card information from the CARDDAT file using the provided card number.
+
+4. Display of Card Details: It displays card information such as the name on the card (CRDNAMEO), card status (CRDSTCDO), and expiration date (EXPMONO and EXPYEARO).
+
+5. Error Handling: The program includes comprehensive error handling, providing specific error messages for various scenarios such as invalid input or data not found.
+
+6. Screen Management: It utilizes CICS BMS (Basic Mapping Support) to manage the user interface, including displaying and receiving information through the COCRDSL map.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. CARDDAT: This file contains credit card information. The program reads this file to retrieve card details based on the input card number.
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. User Input: The program receives account number and card number as input from the user through the CICS screen.
+2. DFHCOMMAREA: The program receives data from the calling program through the DFHCOMMAREA, which includes information such as the previous program, transaction ID, and user details.
+
+Miscellaneous Output:
+1. Screen Output: The program sends card details to the user's screen, including the name on the card, card status, and expiration date.
+2. Error Messages: The program displays error messages on the screen in case of invalid input or when card information is not found.
+3. DFHCOMMAREA: The program updates the DFHCOMMAREA with information to be passed back to the calling program or to the next program in the flow.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the CICS environment and the files it accesses directly.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+<ProgramName>
+<![CDATA[
+COCRDUPC
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The primary purpose of COCRDUPC is to handle the process of updating credit card details within a credit card management system. It allows users to view and modify specific card information such as the cardholder's name, card status, and expiration date.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card management system. It is part of the card maintenance workflow, allowing authorized users to update existing credit card information. This functionality is crucial for maintaining accurate and up-to-date card records, which is essential for proper account management and customer service in the financial services industry.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Card Information Display: The program retrieves and displays existing credit card details for a specified account and card number (CCUP-OLD-DETAILS).
+
+2. Data Validation: It performs extensive validation checks on user inputs to ensure data integrity. For example, it validates the card name (CCUP-NEW-CRDNAME), card status (CCUP-NEW-CRDSTCD), and expiration date (CCUP-NEW-EXPMON and CCUP-NEW-EXPYEAR).
+
+3. Card Information Update: The program allows modification of card details such as the cardholder's name, card status, and expiration date (CCUP-NEW-DETAILS).
+
+4. User Interface Interaction: It manages the display and input of data through a CICS BMS map (COCRDUP), handling user inputs and providing appropriate feedback messages.
+
+5. Database Interaction: The program reads from and writes to a card database file (CARDDAT) to retrieve and update card information.
+
+6. Error Handling: It includes comprehensive error handling and provides user-friendly error messages for various scenarios, such as invalid inputs or database operation failures.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. CARDDAT: This file serves as the primary input source for existing credit card information. The program reads card details from this file based on the provided account and card number.
+
+Output Files:
+1. CARDDAT: The program updates this file with the modified credit card information after successful validation and user confirmation.
+
+Miscellaneous Input:
+1. User Input: The program receives user input through a CICS BMS map (COCRDUP). This includes the account number, card number, and updated card details such as cardholder name, card status, and expiration date.
+
+2. CICS COMMAREA: The program receives initial context information through the CICS COMMAREA, including user identification and program flow control data.
+
+Miscellaneous Output:
+1. CICS BMS Map: The program sends output to the user interface through the CICS BMS map (COCRDUP). This includes displaying existing card details, validation messages, and operation status messages.
+
+2. CICS COMMAREA: The program updates the CICS COMMAREA with processing results and control information for subsequent program invocations.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not directly interact with any external systems beyond its immediate CICS environment and the card database file. It is designed to operate within the CICS transaction processing environment, utilizing CICS services for user interface management and file operations.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

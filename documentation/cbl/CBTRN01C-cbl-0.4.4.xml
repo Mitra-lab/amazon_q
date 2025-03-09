@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program CBTRN01C:
+
+<ProgramName>
+<![CDATA[
+CBTRN01C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of CBTRN01C is to process and post records from a daily transaction file. It reads transactions from the daily transaction file, verifies the card numbers against a cross-reference file, and checks the corresponding account information.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates in the context of a credit card processing system, specifically in the batch processing of daily transactions. It is part of the CardDemo application, which likely handles various aspects of credit card management and transaction processing.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. File Processing: The program opens and processes multiple files, including DALYTRAN-FILE (daily transactions), CUSTOMER-FILE, XREF-FILE (cross-reference), CARD-FILE, ACCOUNT-FILE, and TRANSACT-FILE.
+
+2. Transaction Verification: It verifies each transaction by checking the card number against the XREF-FILE using the XREF-CARD-NUM.
+
+3. Account Lookup: For valid card numbers, it retrieves the corresponding account information from the ACCOUNT-FILE using the ACCT-ID.
+
+4. Error Handling: The program includes error handling for file operations and invalid data, displaying appropriate error messages.
+
+5. Sequential Processing: It processes the daily transaction file sequentially until the end of the file is reached.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. DALYTRAN-FILE: Contains the daily transaction records to be processed.
+2. CUSTOMER-FILE: Likely contains customer information, opened for potential use in transaction processing.
+3. XREF-FILE: Cross-reference file used to verify card numbers and retrieve account IDs.
+4. CARD-FILE: Contains card information, opened for potential use in transaction processing.
+5. ACCOUNT-FILE: Contains account information, used to retrieve account details for verified transactions.
+6. TRANSACT-FILE: Likely contains historical transaction data, opened for potential use in transaction processing.
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+N/A
+
+Miscellaneous Output:
+1. Display Messages: The program outputs various status and error messages to the console, providing information about the processing of transactions and any issues encountered.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not appear to interact with any external systems beyond the files it processes. It operates as a standalone batch processing program within the CardDemo application.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

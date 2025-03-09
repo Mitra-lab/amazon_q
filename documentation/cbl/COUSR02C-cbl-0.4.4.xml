@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program COUSR02C:
+
+<ProgramName>
+<![CDATA[
+COUSR02C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COUSR02C is to update user information in the USRSEC file within a CICS environment. It allows for the modification of user details such as first name, last name, password, and user type.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program is part of the CardDemo application, which appears to be a credit card management system. COUSR02C specifically handles the user management aspect of the application, allowing for the maintenance and updating of user records within the system.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. User Lookup: The program can fetch existing user information based on the provided user ID (USRIDINI).
+2. Data Modification: It allows updating of user details including first name (FNAMEI), last name (LNAMEI), password (PASSWDI), and user type (USRTYPEI).
+3. Data Validation: The program performs basic validation checks, such as ensuring that required fields are not empty.
+4. User Interface Interaction: It handles screen interactions using CICS BMS, displaying and receiving data through the COUSR2A map.
+5. Error Handling: The program includes error handling mechanisms, setting flags (WS-ERR-FLG) and displaying error messages (ERRMSGO).
+6. File Operations: It performs read and update operations on the USRSEC file to retrieve and modify user data.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. USRSEC: This file contains user security information. The program reads from this file to retrieve existing user data for modification.
+
+Output Files:
+1. USRSEC: The program writes updated user information back to this file after modifications are made.
+
+Miscellaneous Input:
+1. User Input: The program receives user input through the COUSR2A map, including user ID, first name, last name, password, and user type.
+2. DFHCOMMAREA: The program receives data through the CICS communication area, which includes information about the program context and user selection.
+
+Miscellaneous Output:
+1. Screen Output: The program sends data to the COUSR2A map to display user information and error messages.
+2. DFHCOMMAREA: The program updates the CICS communication area with information about the current transaction and program state.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the CICS environment and the USRSEC file. It is primarily integrated within the CardDemo application, handling user data management operations.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

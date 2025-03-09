@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+<ProgramName>
+<![CDATA[
+COSGN00C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The primary purpose of COSGN00C is to handle the sign-on process for the CardDemo application. It presents a login screen to users, validates their credentials, and directs them to the appropriate menu based on their user type.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card demonstration application. It serves as the entry point for users accessing the system, ensuring secure access and proper routing based on user roles.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. User Authentication: The program accepts user ID (USERIDI) and password (PASSWDI) inputs and validates them against stored credentials in the USRSEC file.
+
+2. Dynamic Screen Display: Utilizes CICS commands to display the sign-on screen (COSGN0A) with dynamic content such as current date, time, and system information.
+
+3. Error Handling: Implements error checking for invalid user inputs and displays appropriate error messages (WS-MESSAGE) on the screen.
+
+4. User Type Identification: Determines the user type (admin or regular user) based on the SEC-USR-TYPE field from the USRSEC file.
+
+5. Program Flow Control: Uses CICS XCTL commands to transfer control to different programs (COADM01C for admin users, COMEN01C for regular users) based on user type.
+
+6. Logging Functionality: Incorporates a logging mechanism to track program execution and aid in debugging (using ADD-PROGRAM-LOG).
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. USRSEC: This file contains user security information, including user IDs, passwords, and user types. It is used to validate user credentials during the sign-on process.
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. User Input: The program receives user ID and password input from the sign-on screen (COSGN0A).
+2. System Date and Time: The program retrieves the current date and time to display on the sign-on screen.
+3. CICS Environment Information: The program obtains CICS-specific information such as APPLID and SYSID to display on the screen.
+
+Miscellaneous Output:
+1. Sign-on Screen: The program generates and displays the sign-on screen (COSGN0A) with dynamic content.
+2. Error Messages: The program outputs error messages on the screen for invalid inputs or authentication failures.
+3. Program Transfer: Based on user authentication and type, the program transfers control to either COADM01C (for admin users) or COMEN01C (for regular users).
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the CICS environment and the files it accesses directly.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

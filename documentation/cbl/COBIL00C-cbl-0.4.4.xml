@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program COBIL00C.cob:
+
+<ProgramName>
+<![CDATA[
+COBIL00C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COBIL00C is to handle bill payment functionality for a credit card application. It allows users to pay their account balance in full and records a transaction for the online bill payment.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card management system. It is part of the bill payment workflow, allowing customers to view their current balance and make payments online. This functionality is crucial for maintaining customer accounts and ensuring timely payments.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Account Balance Display: The program retrieves and displays the current balance (ACCT-CURR-BAL) for a given account ID (ACTIDIN).
+
+2. Full Balance Payment: Users can confirm and process a payment for the full account balance.
+
+3. Transaction Recording: When a payment is confirmed, the program creates a new transaction record (TRAN-RECORD) with details such as transaction ID, amount, and timestamp.
+
+4. Account Update: After a successful payment, the program updates the account balance (ACCT-CURR-BAL) in the account record (ACCOUNT-RECORD).
+
+5. User Interface Interaction: The program handles user input and output through a CICS screen (COBIL0A), allowing for interactive bill payment.
+
+6. Error Handling: The program includes error checking and displays appropriate error messages (ERRMSGO) when issues occur.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. ACCTDAT: This file contains account information. The program reads account details, including the current balance, for the specified account ID.
+2. CXACAIX: This file is a cross-reference file that links account IDs to card numbers. It's used to retrieve the card number associated with the account for transaction recording.
+3. TRANSACT: This file stores transaction records. The program reads the last transaction ID to generate a new, unique transaction ID for the bill payment.
+
+Output Files:
+1. ACCTDAT: The program updates this file with the new account balance after a successful payment.
+2. TRANSACT: The program writes a new transaction record to this file for the bill payment.
+
+Miscellaneous Input:
+1. User Input: The program receives user input for the account ID (ACTIDIN) and payment confirmation (CONFIRM) through the CICS screen.
+
+Miscellaneous Output:
+1. Screen Output: The program displays account information, current balance, and status messages on the CICS screen (COBIL0A).
+2. Error Messages: The program outputs error messages (ERRMSGO) to the screen when issues occur during processing.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the CICS environment and the files it directly accesses. It is primarily focused on internal processing within the credit card management system.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

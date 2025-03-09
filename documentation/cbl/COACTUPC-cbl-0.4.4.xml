@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+<ProgramName>
+<![CDATA[
+COACTUPC
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The primary purpose of COACTUPC is to handle account updates in a credit card management system. It allows users to view and modify account details, including customer information, account status, credit limits, and other related data.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card management system. It is part of the account maintenance workflow, allowing authorized users to update and manage credit card account information. This process is crucial for maintaining accurate and up-to-date customer and account records in the financial services domain.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Account Data Retrieval: The program retrieves account information using the account ID (ACCT-ID) from the account master file (ACCTDAT) and customer information from the customer master file (CUSTDAT).
+
+2. Data Display: It displays account and customer details on the screen (CACTUPA) for user review and modification.
+
+3. Data Validation: The program performs extensive validation checks on user inputs, including date formats, numeric values, and field-specific validations (e.g., FICO score range, phone number format).
+
+4. Account Update: It allows users to modify various account details such as account status (ACCT-ACTIVE-STATUS), credit limits (ACCT-CREDIT-LIMIT), and customer information (CUST-FIRST-NAME, CUST-ADDR-LINE-1, etc.).
+
+5. Database Update: The program updates the account master file (ACCTDAT) and customer master file (CUSTDAT) with the modified information.
+
+6. Error Handling: It includes comprehensive error handling and displays appropriate error messages to the user.
+
+7. User Interface Management: The program manages screen interactions, including handling function keys and controlling field attributes (e.g., protected, unprotected, highlighted).
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. ACCTDAT: This file serves as the account master file, containing all the account-related information. The program reads this file to retrieve existing account details for display and modification.
+2. CUSTDAT: This is the customer master file, storing all customer-related information. The program reads this file to fetch customer details associated with the account being updated.
+3. CARDDAT: This file likely contains card-specific information, although its exact usage in this program is not clear from the provided code.
+
+Output Files:
+1. ACCTDAT: The program updates this file with modified account information after user edits and validation.
+2. CUSTDAT: This file is updated with any changes made to customer information during the account update process.
+
+Miscellaneous Input:
+1. User Input: The program receives user input through the CACTUPA screen, allowing users to modify account and customer details.
+2. DFHCOMMAREA: This is used to pass data between CICS programs. It contains information such as user ID, program context, and other session-related data.
+
+Miscellaneous Output:
+1. Screen Output: The program displays account and customer information on the CACTUPA screen, including any error messages or informational messages.
+2. DFHCOMMAREA: Updated with program state and relevant data for use by other programs in the system.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not appear to interact with any external systems beyond the CICS environment it operates within. It primarily interacts with CICS files (ACCTDAT, CUSTDAT) and manages user interactions through CICS screen handling.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+<ProgramName>
+<![CDATA[
+COTRN01C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The primary purpose of COTRN01C is to view a transaction from the TRANSACT file in a CICS COBOL environment. It allows users to input a transaction ID and retrieve the corresponding transaction details, displaying them on the screen.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card transaction management system, specifically the CardDemo application. It is part of the workflow that allows users to view detailed information about individual transactions, which is crucial for monitoring, auditing, and customer service purposes in the credit card processing domain.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Transaction ID Input: The program allows users to enter a transaction ID (TRNIDINI) to retrieve specific transaction details.
+2. TRANSACT File Access: It reads transaction records from the TRANSACT file (WS-TRANSACT-FILE) based on the provided transaction ID.
+3. Data Display: The program displays comprehensive transaction information including transaction ID, card number, transaction type, category, source, amount, description, dates, and merchant details.
+4. Error Handling: It includes error handling for scenarios such as invalid transaction IDs or file access issues, displaying appropriate error messages (WS-MESSAGE).
+5. Screen Navigation: The program supports various function keys for actions like returning to the previous screen (PF3), clearing the current screen (PF4), and browsing transactions (PF5).
+6. Date and Time Display: It shows the current date and time on the screen, enhancing user experience and providing context for the transaction view.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. TRANSACT: This file contains the transaction records. The program reads from this file to retrieve specific transaction details based on the user-input transaction ID.
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. User Input: The program accepts a transaction ID (TRNIDINI) from the user to fetch the corresponding transaction details.
+2. DFHCOMMAREA: This is the communication area used to pass data between CICS programs. It contains information such as the selected transaction ID and other context data.
+
+Miscellaneous Output:
+1. Screen Display: The program outputs transaction details to the screen, including transaction ID, card number, transaction type, category, source, amount, description, dates, and merchant information.
+2. Error Messages: When errors occur, such as invalid transaction IDs or file access issues, the program displays appropriate error messages on the screen.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the CICS environment and the TRANSACT file. It primarily operates within the CardDemo application, interacting with other programs in the suite through the CICS COMMAREA for navigation and data passing purposes.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

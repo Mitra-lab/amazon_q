@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the COACTVWC program:
+
+<ProgramName>
+<![CDATA[
+COACTVWC
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COACTVWC is to handle the Account View functionality in a credit card management system. It allows users to view detailed information about a specific account, including account details and associated customer information.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card management system. It is part of the account management workflow, specifically handling the viewing of account details. This functionality is crucial for customer service representatives or authorized users who need to access and review account information quickly and efficiently.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Account Search: The program allows users to search for an account using the account number (ACCTSID).
+2. Account Information Display: It retrieves and displays detailed account information, including account status (ACSTTUS), open date (ADTOPEN), credit limit (ACRDLIM), expiration date (AEXPDT), and current balance (ACURBAL).
+3. Customer Information Display: The program fetches and shows associated customer details, such as customer ID (ACSTNUM), SSN (ACSTSSN), name (ACSFNAM, ACSMNAM, ACSLNAM), and address information.
+4. Data Validation: It performs input validation to ensure the entered account number is valid and exists in the system.
+5. Error Handling: The program includes error handling mechanisms to manage and display appropriate error messages (ERRMSG) when issues occur during processing.
+6. Screen Management: It utilizes CICS BMS (Basic Mapping Support) to manage the display and input of data on the COACTVW screen.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. CARDXREF: This file is used to cross-reference account numbers with customer IDs and card numbers. It serves as an initial lookup to validate the account and retrieve associated information.
+2. ACCTDAT: This file contains detailed account information. It is used to retrieve account-specific data such as balance, credit limit, and status.
+3. CUSTDAT: This file stores customer information. It is accessed to fetch customer details associated with the account.
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. User Input: The program receives the account number (ACCTSID) as input from the user through the COACTVW screen.
+2. CICS COMMAREA: The program receives context information and potentially pre-filled data through the CICS COMMAREA.
+
+Miscellaneous Output:
+1. Screen Output: The program outputs account and customer information to the COACTVW screen, populating various fields such as ACURBAL (current balance), ACRDLIM (credit limit), ACSFNAM (customer first name), etc.
+2. Error Messages: Any error messages or informational messages are displayed in the ERRMSG field on the screen.
+3. CICS COMMAREA: The program updates the COMMAREA with processed data and status information for potential use by other programs in the workflow.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not directly interact with external systems beyond the CICS environment it operates within. It primarily interacts with CICS services for screen management and file access, and it may be part of a larger workflow within the credit card management system, but it doesn't integrate with separate external systems.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

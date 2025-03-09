@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program CBSTM03B based on the provided COBOL code:
+
+<ProgramName>
+<![CDATA[
+CBSTM03B
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of CBSTM03B is to perform file processing operations related to the Transact Report. It serves as a batch COBOL subroutine that handles file operations for four different indexed files: TRNX-FILE, XREF-FILE, CUST-FILE, and ACCT-FILE.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a card transaction processing system, likely for a financial institution or credit card company. It is part of the CardDemo application, specifically handling the file operations necessary for generating transaction reports.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. File Handling: The program manages four indexed files (TRNX-FILE, XREF-FILE, CUST-FILE, and ACCT-FILE) using various file operations such as OPEN, READ, and CLOSE.
+
+2. Flexible Operation: The program supports different operations (OPEN, CLOSE, READ, READ-K, WRITE, REWRITE) based on the value passed in LK-M03B-OPER.
+
+3. Modular Design: The program is structured into separate procedures for each file (1000-TRNXFILE-PROC, 2000-XREFFILE-PROC, 3000-CUSTFILE-PROC, 4000-ACCTFILE-PROC), allowing for organized and maintainable code.
+
+4. Error Handling: The program captures and returns file status codes (e.g., TRNXFILE-STATUS, XREFFILE-STATUS) for each operation, enabling error tracking and handling by the calling program.
+
+5. Data Transfer: The program reads data from files into the LK-M03B-FLDT field in the linkage section, facilitating data transfer between this subroutine and the calling program.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. TRNX-FILE: This file contains transaction records, likely used for processing and reporting on card transactions.
+2. XREF-FILE: This file appears to be a cross-reference file, possibly linking card numbers to other identifiers.
+3. CUST-FILE: This file contains customer records, used for retrieving customer information related to transactions.
+4. ACCT-FILE: This file contains account records, used for retrieving account information related to transactions.
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. LK-M03B-AREA: This is a linkage section area that provides input parameters for the program, including the operation to perform and the file to operate on.
+
+Miscellaneous Output:
+1. LK-M03B-RC: This field in the linkage section is used to return the file status code after each operation, providing feedback on the success or failure of file operations.
+2. LK-M03B-FLDT: This field in the linkage section is used to return the data read from the files, allowing the calling program to access the retrieved information.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not directly interact with any external systems. It is designed to be called by another program, likely the main transaction report generation program, to handle file operations. The integration is primarily through the linkage section (LK-M03B-AREA) which allows the calling program to specify the operation and receive the results.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program CBTRN03C.cob:
+
+<ProgramName>
+<![CDATA[
+CBTRN03C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of CBTRN03C is to print a detailed transaction report. It processes transaction records, cross-references them with account information, and generates a formatted report containing transaction details and totals.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates in the context of a credit card transaction processing system, specifically within the CardDemo application. It is part of the reporting workflow, generating a daily transaction report that provides insights into credit card transactions for a specified date range.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Date Range Processing: The program reads date parameters (WS-START-DATE and WS-END-DATE) to filter transactions within a specific date range.
+
+2. Transaction Processing: It reads transaction records (TRAN-RECORD) from the TRANSACT-FILE and processes them sequentially.
+
+3. Cross-referencing: The program uses the XREF-FILE to look up account information (XREF-ACCT-ID) associated with each card number (TRAN-CARD-NUM).
+
+4. Transaction Type and Category Lookup: It uses TRANTYPE-FILE and TRANCATG-FILE to retrieve descriptions for transaction types and categories.
+
+5. Report Generation: The program writes detailed transaction information to the REPORT-FILE, including transaction ID, account ID, type, category, source, and amount.
+
+6. Totals Calculation: It calculates and reports page totals (WS-PAGE-TOTAL), account totals (WS-ACCOUNT-TOTAL), and grand totals (WS-GRAND-TOTAL) for the transactions.
+
+7. Pagination: The program manages report pagination, writing headers and totals at appropriate intervals (WS-PAGE-SIZE).
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. TRANSACT-FILE: Contains the transaction records to be processed and reported.
+2. XREF-FILE: Stores cross-reference information linking card numbers to account IDs.
+3. TRANTYPE-FILE: Contains descriptions for different transaction types.
+4. TRANCATG-FILE: Stores descriptions for transaction categories.
+5. DATE-PARMS-FILE: Provides the start and end dates for filtering transactions.
+
+Output Files:
+1. REPORT-FILE: The generated transaction detail report, including transaction details and various totals.
+
+Miscellaneous Input:
+N/A
+
+Miscellaneous Output:
+N/A
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the files it processes. It operates as a standalone batch program within the CardDemo application ecosystem.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

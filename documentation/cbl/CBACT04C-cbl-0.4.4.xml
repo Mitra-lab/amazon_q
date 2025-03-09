@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program CBACT04C.cob:
+
+<ProgramName>
+<![CDATA[
+CBACT04C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of CBACT04C is to calculate interest for credit card accounts. It processes transaction category balances, computes interest based on account-specific rates, and generates interest transactions.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates in the context of a credit card processing system, specifically in the financial calculations and account management domain. It is part of the interest calculation and posting workflow, which is a critical component of credit card account management and billing processes.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Transaction Category Balance Processing: The program reads transaction category balances from the TCATBAL-FILE (FD-TRAN-CAT-BAL-RECORD) sequentially.
+
+2. Account Information Retrieval: For each unique account, it retrieves account details from the ACCOUNT-FILE (ACCOUNT-RECORD) and cross-reference information from the XREF-FILE (CARD-XREF-RECORD).
+
+3. Interest Rate Determination: It fetches the appropriate interest rate from the DISCGRP-FILE (DIS-GROUP-RECORD) based on the account group and transaction category.
+
+4. Interest Calculation: The program calculates monthly interest (WS-MONTHLY-INT) for each transaction category balance using the retrieved interest rate.
+
+5. Interest Transaction Generation: It creates interest transactions and writes them to the TRANSACT-FILE (TRAN-RECORD).
+
+6. Account Balance Update: After processing all transaction categories for an account, it updates the account balance in the ACCOUNT-FILE to reflect the total interest (WS-TOTAL-INT) calculated.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. TCATBAL-FILE: Contains transaction category balances for each account. This file provides the base amounts on which interest is calculated.
+2. XREF-FILE: Stores cross-reference information linking card numbers to account IDs. It's used to retrieve the card number associated with each account.
+3. DISCGRP-FILE: Contains interest rate information for different account groups and transaction categories. This file is crucial for determining the correct interest rate to apply.
+4. ACCOUNT-FILE: Stores account information including current balances. It's read to get account details and updated with new balances after interest calculation.
+
+Output Files:
+1. TRANSACT-FILE: The program writes generated interest transactions to this file. Each record represents an interest charge for a specific account and transaction category.
+2. ACCOUNT-FILE: This file is also an output as the program updates account balances with the calculated interest.
+
+Miscellaneous Input:
+1. EXTERNAL-PARMS: Contains the processing date (PARM-DATE) used for generating transaction IDs.
+
+Miscellaneous Output:
+1. Display messages: The program outputs various status and error messages to the console for monitoring and debugging purposes.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the files it processes. It operates as a standalone batch process within the credit card processing system.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

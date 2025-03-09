@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+<ProgramName>
+<![CDATA[
+COTRN02C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COTRN02C is to add a new transaction to the TRANSACT file in a credit card demo application. It handles the process of receiving transaction details from a user interface, validating the input, and writing the new transaction record to the file.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card transaction processing system. It is part of the workflow that manages the addition of new transactions to a customer's credit card account. This process is crucial for maintaining accurate records of credit card usage and updating account balances.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. User Input Handling: The program receives and processes user input for transaction details through the COTRN2A map.
+
+2. Input Validation: It performs extensive validation on the input fields, including checking for numeric values, date formats, and required fields. For example, it validates the ACTIDINI (Account ID) and CARDNINI (Card Number) fields.
+
+3. Account and Card Verification: The program verifies the existence of the account or card number by reading the CXACAIX and CCXREF files respectively.
+
+4. Transaction ID Generation: It generates a new unique transaction ID by reading the last transaction record and incrementing the ID.
+
+5. Transaction Record Creation: The program creates a new transaction record (TRAN-RECORD) with the validated and processed input data.
+
+6. File Writing: It writes the new transaction record to the TRANSACT file.
+
+7. Error Handling: The program includes comprehensive error handling and displays appropriate error messages on the user interface.
+
+8. Screen Management: It manages the display and update of the transaction input screen, including populating header information and handling various function keys.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. CXACAIX: This file is used to verify the account ID entered by the user. It serves as a cross-reference between account IDs and card numbers.
+2. CCXREF: This file is used to verify the card number entered by the user. It contains cross-reference information between card numbers and account IDs.
+3. TRANSACT: This file is read to determine the last transaction ID for generating a new unique transaction ID.
+
+Output Files:
+1. TRANSACT: The program writes the new transaction record to this file, which stores all transaction data.
+
+Miscellaneous Input:
+1. User Input: The program receives transaction details from the user through the COTRN2A map, including account ID or card number, transaction type, category, source, description, amount, dates, and merchant information.
+
+Miscellaneous Output:
+1. Screen Output: The program sends updated information to the COTRN2A map, including error messages, confirmation messages, and populated transaction details.
+2. CICS Commands: The program uses CICS commands to interact with the user interface and manage the transaction flow.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the CICS environment and the files it accesses. It primarily operates within the CICS transaction processing system, handling user interactions and file operations.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

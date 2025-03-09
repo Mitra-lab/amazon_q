@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program COTRN00C.cob:
+
+<ProgramName>
+<![CDATA[
+COTRN00C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COTRN00C is to list transactions from the TRANSACT file. It provides functionality to display, navigate, and select transactions for further viewing.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card transaction management system. It is part of the CardDemo application, which likely handles various aspects of credit card operations. COTRN00C specifically deals with the transaction listing and selection process, allowing users to view and interact with transaction records.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Transaction Listing: The program displays a list of transactions from the TRANSACT file (WS-TRANSACT-FILE).
+2. Pagination: It implements pagination functionality, allowing users to navigate through multiple pages of transactions using PF7 (backward) and PF8 (forward) keys.
+3. Transaction Search: Users can search for specific transactions by entering a transaction ID (TRNIDINI).
+4. Transaction Selection: The program allows users to select a specific transaction for detailed viewing by entering 'S' next to the desired transaction.
+5. Dynamic Screen Update: The program updates the screen (COTRN0AO) with transaction details, including transaction ID, date, description, and amount.
+6. Error Handling: It includes error handling for invalid user inputs and file operations, displaying appropriate error messages (WS-MESSAGE).
+7. Integration with Other Modules: The program can transfer control to other modules, such as COTRN01C for detailed transaction view and COMEN01C for returning to a previous screen.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. TRANSACT: This file contains the transaction records that the program reads and displays. It serves as the primary data source for the transaction listing functionality.
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. User Input: The program accepts user inputs for transaction search (TRNIDINI) and transaction selection (SEL0001I to SEL0010I).
+2. Function Keys: The program processes function key inputs such as ENTER, PF3 (exit), PF7 (backward), and PF8 (forward) for navigation and control.
+3. DFHCOMMAREA: The program receives data through the DFHCOMMAREA, which likely contains session information and parameters passed from other modules.
+
+Miscellaneous Output:
+1. Screen Output: The program generates output to the COTRN0AO screen, displaying transaction details, page numbers, and status messages.
+2. Error Messages: The program outputs error messages (WS-MESSAGE) to inform users of invalid inputs or processing issues.
+3. DFHCOMMAREA: The program updates the DFHCOMMAREA with relevant information before transferring control to other modules.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the CICS environment it operates within. It primarily interacts with other modules of the CardDemo application, such as COTRN01C for detailed transaction viewing and COMEN01C for returning to a previous screen.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

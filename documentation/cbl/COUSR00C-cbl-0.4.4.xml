@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+<ProgramName>
+<![CDATA[
+COUSR00C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The primary purpose of COUSR00C is to list all users from the USRSEC file in a CICS environment. It provides functionality to display, navigate through, and select users for further actions such as updating or deleting.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program is part of the CardDemo application, which appears to be a credit card management system. COUSR00C specifically handles the user management aspect of the application, allowing administrators to view and manage user accounts stored in the system.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. User Listing: The program retrieves and displays a list of users from the USRSEC file (WS-USRSEC-FILE).
+2. Pagination: It implements pagination functionality, allowing users to navigate through multiple pages of user records (using CDEMO-CU00-PAGE-NUM).
+3. Search Capability: Users can search for specific user IDs (using USRIDINI field).
+4. User Selection: The program allows selection of individual users for update or delete operations (using SEL0001 to SEL0010 fields).
+5. Navigation: It provides forward and backward navigation through user records (using PF7 and PF8 keys).
+6. Error Handling: The program includes error handling and displays error messages when necessary (using WS-MESSAGE and ERRMSGO fields).
+7. Screen Management: It manages the display and input of data on the CICS screen (using the COUSR0A map).
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. USRSEC: This file contains user security information. The program reads this file to retrieve and display user records.
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. User Input: The program accepts user input for searching (USRIDINI field), selecting users (SEL0001 to SEL0010 fields), and navigation (function keys).
+2. DFHCOMMAREA: The program receives data from the common area, which includes information about the current user and program context.
+
+Miscellaneous Output:
+1. Screen Display: The program outputs user information to the CICS screen using the COUSR0A map.
+2. DFHCOMMAREA: The program updates the common area with information about the selected user and the next program to be called.
+3. Error Messages: The program displays error messages on the screen when necessary (using the ERRMSGO field).
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the CICS environment and the USRSEC file. It is designed to work within the CardDemo application, potentially integrating with other programs in the same application for user management operations.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

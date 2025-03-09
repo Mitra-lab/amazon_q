@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program CBSTM03A:
+
+<ProgramName>
+<![CDATA[
+CBSTM03A
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of CBSTM03A is to print account statements from transaction data in two formats: plain text and HTML. It processes transaction data, customer information, and account details to generate comprehensive account statements.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates in the context of a credit card or banking system, specifically in the statement generation process. It is part of the CardDemo application, which likely handles various aspects of credit card management and customer account services.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Multi-format Statement Generation: The program generates statements in both plain text and HTML formats (FD-STMTFILE-REC and FD-HTMLFILE-REC).
+2. Data Integration: It integrates data from multiple sources including transaction records (TRNX-RECORD), customer information (CUSTOMER-RECORD), account details (ACCOUNT-RECORD), and card cross-reference data (CARD-XREF-RECORD).
+3. Transaction Processing: The program processes and summarizes transaction data for each account (WS-TRNX-TABLE).
+4. Balance Calculation: It calculates and includes the current balance in the statement (ST-CURR-BAL).
+5. Dynamic HTML Generation: The program dynamically generates HTML content for web-based statement viewing (HTML-LINES).
+6. File Handling: It uses a subroutine (CBSTM03B) for file operations on multiple input files.
+7. Error Handling: The program includes error checking and handling for file operations (9999-ABEND-PROGRAM).
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. TRNXFILE: Contains transaction data for processing. This file provides the core transaction information for generating the account statements.
+2. XREFFILE: Contains cross-reference data linking cards to customers and accounts. This file is crucial for associating transactions with the correct customer and account.
+3. CUSTFILE: Contains customer information. This file provides personal details of customers for inclusion in the statement.
+4. ACCTFILE: Contains account information. This file provides account-specific details such as balance and credit limit.
+
+Output Files:
+1. STMT-FILE: The output file for plain text format statements. This file contains the formatted account statements in a text format, suitable for printing or archiving.
+2. HTML-FILE: The output file for HTML format statements. This file contains the same statement information as STMT-FILE but in HTML format, suitable for web-based viewing or email distribution.
+
+Miscellaneous Input:
+N/A
+
+Miscellaneous Output:
+N/A
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the file operations it performs. It relies on the subroutine CBSTM03B for file handling, but this is considered an internal component rather than an external system.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

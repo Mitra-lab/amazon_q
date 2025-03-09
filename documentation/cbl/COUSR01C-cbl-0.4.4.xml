@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program COUSR01C.cob:
+
+<ProgramName>
+<![CDATA[
+COUSR01C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COUSR01C is to add a new Regular or Admin user to the USRSEC file in a CICS COBOL environment. It handles the process of collecting user information, validating input, and writing the new user record to the USRSEC file.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program is part of the CardDemo application, which appears to be a credit card management system. COUSR01C specifically handles user management, allowing the addition of new users to the system. This functionality is crucial for maintaining access control and user authentication within the CardDemo application.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. User Input Handling: The program uses a CICS screen (COUSR1A) to collect user information such as first name, last name, user ID, password, and user type.
+
+2. Input Validation: It performs validation checks on the input fields to ensure all required information is provided before processing the new user addition.
+
+3. User Record Creation: The program creates a new user record (SEC-USER-DATA) with the provided information.
+
+4. File Writing: It writes the new user record to the USRSEC file using CICS WRITE command.
+
+5. Error Handling: The program includes error handling for various scenarios such as duplicate user IDs and general write errors.
+
+6. Screen Navigation: It supports navigation between screens using PF keys (PF3 for back, PF4 for clear, and handles other keys as invalid).
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+N/A
+
+Output Files:
+1. USRSEC: This file stores user security information. The program writes new user records to this file, which is likely used for user authentication and access control in the CardDemo application.
+
+Miscellaneous Input:
+1. CICS Screen Input (COUSR1AI): The program receives user input from the CICS screen COUSR1A, including first name, last name, user ID, password, and user type. This input is crucial for creating new user records.
+
+2. CICS COMMAREA: The program receives a communication area (DFHCOMMAREA) which likely contains contextual information for the program's execution.
+
+Miscellaneous Output:
+1. CICS Screen Output (COUSR1AO): The program sends output to the CICS screen COUSR1A, including error messages, success messages, and populated fields for user interaction.
+
+2. CICS COMMAREA: The program updates and returns the communication area (CARDDEMO-COMMAREA) which may contain information for subsequent program calls.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not appear to interact with any external systems beyond the CICS environment and the USRSEC file. It primarily operates within the CardDemo application, handling user management functions.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

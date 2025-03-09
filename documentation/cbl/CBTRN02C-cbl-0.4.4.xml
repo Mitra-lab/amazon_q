@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program CBTRN02C:
+
+<ProgramName>
+<![CDATA[
+CBTRN02C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of CBTRN02C is to post records from a daily transaction file to various other files, including a transaction file, account file, and transaction category balance file. It processes each transaction, validates it, and updates the relevant records accordingly.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates in the context of a credit card processing system, specifically handling daily transaction processing. It is part of the CardDemo application, which likely manages credit card accounts and transactions for a financial institution.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Transaction Processing: Reads transactions from the DALYTRAN-FILE and processes them one by one.
+2. Transaction Validation: Validates each transaction by checking the card number against the XREF-FILE and verifying the account details in the ACCOUNT-FILE.
+3. Account Update: Updates the account balance and cycle credits/debits in the ACCOUNT-FILE based on the transaction amount.
+4. Transaction Categorization: Updates the transaction category balances in the TCATBAL-FILE.
+5. Rejection Handling: Writes rejected transactions to the DALYREJS-FILE with a validation trailer explaining the reason for rejection.
+6. Transaction Recording: Writes valid transactions to the TRANSACT-FILE for record-keeping.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. DALYTRAN-FILE: Contains the daily transaction records to be processed.
+2. XREF-FILE: Stores the cross-reference information between card numbers and account IDs.
+3. ACCOUNT-FILE: Holds the account information for each customer.
+4. TCATBAL-FILE: Stores the transaction category balances for each account.
+
+Output Files:
+1. TRANSACT-FILE: Stores the processed and valid transactions.
+2. DALYREJS-FILE: Contains the rejected transactions along with the reason for rejection.
+3. ACCOUNT-FILE: Updated with new balances and cycle credits/debits after processing transactions.
+4. TCATBAL-FILE: Updated with new category balances after processing transactions.
+
+Miscellaneous Input:
+N/A
+
+Miscellaneous Output:
+1. Console Output: Displays the number of transactions processed and rejected at the end of the program execution.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the files it processes. It operates as a standalone batch program within the CardDemo application.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

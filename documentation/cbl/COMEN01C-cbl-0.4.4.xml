@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program COMEN01C:
+
+<ProgramName>
+<![CDATA[
+COMEN01C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COMEN01C is to display and handle the main menu for regular users in the CardDemo application. It presents a list of options to the user, processes their selection, and routes them to the appropriate program based on their choice.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card management system. It serves as the central hub for regular users to access various functionalities related to account management, credit card operations, and transaction handling within the CardDemo application.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Menu Display: The program displays a dynamic menu with up to 12 options (OPTN001 to OPTN012) for the user to choose from.
+
+2. User Input Handling: It processes user input (OPTIONI) and validates the selected option.
+
+3. Access Control: The program checks user type (CDEMO-USRTYP-USER) and restricts access to admin-only options.
+
+4. Dynamic Program Routing: Based on the user's selection, it routes to the appropriate program using CDEMO-MENU-OPT-PGMNAME.
+
+5. Error Handling: The program manages and displays error messages (ERRMSGO) for invalid inputs or unauthorized access attempts.
+
+6. Session Management: It maintains session information using CARDDEMO-COMMAREA for communication between programs.
+
+7. Screen Management: The program handles the display and update of the CICS BMS screen COMEN1A.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+N/A
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. User Selection: The program receives user input for menu option selection through the OPTIONI field on the COMEN1A screen.
+2. DFHCOMMAREA: The program receives session information through the DFHCOMMAREA, which is used to maintain state between different screens and programs in the application.
+
+Miscellaneous Output:
+1. COMEN1A Screen: The program outputs the main menu screen (COMEN1A) with dynamically populated menu options and other information such as current date, time, and error messages.
+2. CARDDEMO-COMMAREA: The program updates the CARDDEMO-COMMAREA with information about the selected option and the next program to be called.
+3. Error Messages: The program outputs error messages (ERRMSGO) on the screen for invalid inputs or unauthorized access attempts.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems. It primarily interacts with other programs within the CardDemo application through CICS program control (XCTL) based on the user's menu selection.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

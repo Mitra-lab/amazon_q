@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program COUSR03C:
+
+<ProgramName>
+<![CDATA[
+COUSR03C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COUSR03C is to delete a user from the USRSEC file in a CICS COBOL environment. It provides functionality to fetch user details, display them, and then delete the user record upon confirmation.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program is part of the CardDemo application, which appears to be a credit card management system. COUSR03C specifically handles the user management aspect, allowing administrators to remove user accounts from the system. This is crucial for maintaining up-to-date user records and ensuring proper access control within the credit card management application.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. User Lookup: The program allows searching for a user by their User ID (USRIDINI).
+2. User Information Display: Once a user is found, it displays their First Name (FNAMEI), Last Name (LNAMEI), and User Type (USRTYPEI).
+3. User Deletion: Provides functionality to delete the user record from the USRSEC file using the PF5 key.
+4. Error Handling: Implements error checking and displays appropriate error messages (ERRMSGO) for various scenarios.
+5. Screen Navigation: Supports navigation between screens using function keys (PF3 for back, PF4 for clear, PF12 for main menu).
+6. CICS Integration: Utilizes CICS commands for screen handling (SEND and RECEIVE) and file operations (READ and DELETE).
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. USRSEC: This file contains user security information. The program reads user records from this file to display user details before deletion.
+
+Output Files:
+1. USRSEC: The program updates this file by deleting the specified user record.
+
+Miscellaneous Input:
+1. User Input: The program receives user input through the COUSR3AI map, including the User ID for deletion.
+2. Function Keys: The program processes function key inputs (EIBAID) for navigation and actions.
+
+Miscellaneous Output:
+1. Screen Display: The program outputs user information and messages to the screen using the COUSR3AO map.
+2. Error Messages: The program displays error messages (ERRMSGO) for various scenarios such as invalid input or user not found.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program does not interact with any external systems beyond the CICS environment and the USRSEC file. It is designed to work within the CardDemo application, potentially integrating with other programs in the same application suite for user management and authentication purposes.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+Here's the high-level overview of the program COADM01C:
+
+<ProgramName>
+<![CDATA[
+COADM01C
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The main purpose of COADM01C is to provide an admin menu interface for administrative users in the CardDemo application. It displays a menu of administrative options and processes user selections to navigate to other program modules.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the context of a credit card management system, specifically handling the administrative functions. It serves as the central hub for administrators to access various management and security-related tasks within the CardDemo application.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Menu Display: The program displays an admin menu with various options (OPTN001 to OPTN010 in the COADM1AO map).
+2. User Input Processing: It processes user input (OPTIONI in COADM1AI) to determine which option the admin has selected.
+3. Navigation Control: Based on the user's selection, it navigates to other program modules using EXEC CICS XCTL command.
+4. Error Handling: The program includes error handling for invalid user inputs (WS-ERR-FLG and WS-MESSAGE).
+5. Session Management: It manages the program flow using a reenter flag (CDEMO-PGM-REENTER) to determine if it's a first-time entry or a reentry.
+6. Screen Management: The program uses CICS commands to send and receive map data (COADM1AO and COADM1AI).
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+N/A
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. User Input: The program receives user input through the COADM1AI map, specifically the OPTIONI field, which allows administrators to select menu options.
+2. DFHCOMMAREA: The program receives data through the DFHCOMMAREA, which contains information about the user session and program context.
+
+Miscellaneous Output:
+1. Screen Output: The program generates screen output using the COADM1AO map, displaying the admin menu options and any error messages.
+2. DFHCOMMAREA: The program updates the DFHCOMMAREA with information about the selected option and the next program to be executed.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program interacts with other modules within the CardDemo application based on the user's menu selection. It uses CICS XCTL commands to transfer control to other programs, such as COUSR00C, COUSR01C, COUSR02C, and COUSR03C, which handle specific administrative tasks. However, there are no external systems outside of the CardDemo application that this program directly interacts with.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Documentation>
+
+
+<HighLevelOverviewOfThisProgram>
+
+<ProgramName>
+<![CDATA[
+COCRDLIC
+]]>
+</ProgramName>
+
+<MainPurpose>
+<![CDATA[
+The primary purpose of COCRDLIC is to list credit cards associated with a specific account or all cards if no account is specified. It provides functionality to view and update card details based on user input and authorization level.
+]]>
+</MainPurpose>
+
+<BusinessContext>
+<![CDATA[
+This program operates within the credit card management system of a financial institution. It is part of the workflow for managing and displaying credit card information, allowing users to view and potentially update card details based on their access level.
+]]>
+</BusinessContext>
+
+<KeyFeatures>
+<![CDATA[
+1. Card Listing: Displays a list of credit cards, either all cards for admin users or only those associated with a specific account (CDEMO-ACCT-ID).
+2. Filtering: Allows filtering of card listings based on account number (CC-ACCT-ID) and card number (CC-CARD-NUM).
+3. Pagination: Implements forward and backward pagination for displaying multiple pages of card records (using PF7 and PF8 keys).
+4. User Input Handling: Processes user inputs for selecting specific cards for viewing or updating.
+5. Access Control: Differentiates between admin users and regular users, controlling the scope of card information displayed.
+6. Data Validation: Performs input validation for account and card number filters.
+7. Error Handling: Provides error messages for invalid inputs or when no records are found.
+]]>
+</KeyFeatures>
+
+<InputOutput>
+<![CDATA[
+Input Tables:
+N/A
+
+Output Tables:
+N/A
+
+Input Files:
+1. CARDDAT: This file contains credit card records. The program reads from this file to retrieve card information based on the specified filters or to list all cards for admin users.
+
+Output Files:
+N/A
+
+Miscellaneous Input:
+1. User Input: The program processes user inputs for account number (ACCTSIDI) and card number (CARDSIDI) filters, as well as selection inputs for viewing or updating specific cards (CRDSEL1I to CRDSEL7I).
+2. CARDDEMO-COMMAREA: This is the communication area that contains various program control information, including user type, account ID, and card number.
+
+Miscellaneous Output:
+1. Screen Output: The program generates a formatted screen output (CCRDLIAO) displaying the list of credit cards, including account numbers, card numbers, and card statuses.
+2. Error Messages: The program outputs error messages (ERRMSGO) for invalid inputs or when no records are found.
+3. Information Messages: The program displays informational messages (INFOMSGO) to guide user actions.
+]]>
+</InputOutput>
+
+<Integration>
+<![CDATA[
+This program interacts with other components of the credit card management system, such as the card detail view program (COCRDSLC) and the card update program (COCRDUPC). However, it does not directly integrate with any external systems outside of the CICS environment.
+]]>
+</Integration>
+
+
+
+</HighLevelOverviewOfThisProgram>
+
+</Documentation>
